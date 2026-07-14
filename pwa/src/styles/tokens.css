@@ -1,0 +1,46 @@
+:root {
+  --color-bg: #ffffff;
+  --color-surface: #f2f6fb;
+  --color-surface-done: #e3f5e8;
+  --color-text: #14181f;
+  --color-text-secondary: #4b5768;
+  --color-primary: #1864ab;
+  --color-primary-dark: #0b4c8c;
+  --color-banner: #d9480f;
+  --color-banner-text: #ffffff;
+  --color-border: #d3dbe8;
+  --color-done-check: #2b8a3e;
+  --color-offline-banner: #495057;
+  --color-focus-ring: #1864ab;
+
+  --radius-card: 20px;
+  --radius-sheet: 24px;
+  --radius-button: 16px;
+
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 48px;
+
+  --tap-min: 48px;
+  --tap-primary: 64px;
+  --tap-card: 88px;
+}
+
+/* Large: the spec's stated floor (20px base). Extra Large (default): ~1.25x. */
+html.text-size-large {
+  --font-base: 20px;
+  --font-md: 24px;
+  --font-lg: 32px;
+  --font-xl: 44px;
+  --font-xxl: 60px;
+}
+
+html.text-size-xl {
+  --font-base: 25px;
+  --font-md: 30px;
+  --font-lg: 40px;
+  --font-xl: 55px;
+  --font-xxl: 75px;
+}

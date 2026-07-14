@@ -1,0 +1,8 @@
+.banner {
+  background: var(--color-offline-banner);
+  color: #ffffff;
+  text-align: center;
+  font-size: var(--font-base);
+  font-weight: 600;
+  padding: 10px var(--space-2);
+}

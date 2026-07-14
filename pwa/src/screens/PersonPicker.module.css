@@ -1,0 +1,46 @@
+.screen {
+  /* min-height:100% would need a definite height all the way up the
+     ancestor chain (#root -> .app-root -> here) to resolve, and a flex
+     container whose height only comes from min-height doesn't reliably
+     propagate that. Anchor to the viewport directly instead so centering
+     actually works. */
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.title {
+  font-size: var(--font-xxl);
+  font-weight: 800;
+  text-align: center;
+  margin: 0 0 var(--space-4);
+}
+
+.loading {
+  font-size: var(--font-lg);
+  color: var(--color-text-secondary);
+}
+
+.list {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.personButton {
+  width: 100%;
+  min-height: 96px;
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-card);
+  box-shadow: 0 4px 16px rgba(24, 100, 171, 0.3);
+}

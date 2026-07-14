@@ -1,0 +1,16 @@
+[Unit]
+Description=MedFam API
+After=network.target
+
+[Service]
+Type=simple
+User=shinobi
+WorkingDirectory=/home/shinobi/medfam
+Environment=NODE_ENV=production
+Environment=PORT=8093
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

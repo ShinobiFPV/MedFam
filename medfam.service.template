@@ -1,0 +1,17 @@
+[Unit]
+Description=MedFam API
+After=network.target
+
+[Service]
+Type=simple
+User=__MEDFAM_USER__
+WorkingDirectory=__MEDFAM_DIR__
+Environment=NODE_ENV=production
+Environment=PORT=__MEDFAM_PORT__
+Environment=MEDFAM_TIMEZONE=__MEDFAM_TIMEZONE__
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
