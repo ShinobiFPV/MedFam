@@ -11,6 +11,24 @@ reference target) — your data stays on your network.
 - No accounts, no cloud, no telemetry. It's meant to run on a private network (see the
   warning below) and be administered by whoever installs it.
 
+## Screenshots
+
+<table>
+<tr>
+<td align="center" width="50%"><img src="docs/screenshots/person-picker.png" width="280" alt="Person picker screen — large buttons for each family member"><br><sub>First run: pick who this tablet is for</sub></td>
+<td align="center" width="50%"><img src="docs/screenshots/today.png" width="280" alt="Today screen — medications grouped by time of day, with a today's-appointment banner"><br><sub>Today: meds grouped by time of day, tap to mark taken</sub></td>
+</tr>
+<tr>
+<td align="center" width="50%"><img src="docs/screenshots/description-sheet.png" width="280" alt="Medication description bottom sheet"><br><sub>"What is this?" opens a plain-language description</sub></td>
+<td align="center" width="50%"><img src="docs/screenshots/appointments.png" width="280" alt="Upcoming appointments screen with a confirmed and an unconfirmed appointment"><br><sub>Upcoming appointments — confirm with one tap</sub></td>
+</tr>
+</table>
+
+<details>
+<summary>Settings screen</summary>
+<img src="docs/screenshots/settings.png" width="280" alt="Settings screen with text size toggle">
+</details>
+
 ## ⚠️ Before you install: this has no login
 
 MedFam has **no authentication**. Anyone who can reach the server's port can read and
