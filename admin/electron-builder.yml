@@ -13,7 +13,12 @@ nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
-  artifactName: ${productName}-Setup-${version}.${ext}
+  # No spaces: GitHub silently mangles spaces in uploaded release asset names
+  # (differently than electron-builder's own latest.yml expects), which
+  # breaks electron-updater's ability to find the file. productName itself
+  # (used for the window title / Start Menu entry / install dir) can still
+  # have a space; only the actual output filename needs to avoid one.
+  artifactName: MedFam-Admin-Setup-${version}.${ext}
 publish:
   provider: github
   owner: ShinobiFPV
