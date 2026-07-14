@@ -1,0 +1,76 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4b5768;
+}
+
+.field input,
+.field select,
+.field textarea {
+  font: inherit;
+  font-size: 14px;
+  padding: 8px 10px;
+  border: 1px solid #d3dbe8;
+  border-radius: 6px;
+  background: #fff;
+  color: #14181f;
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+}
+
+.row > .field {
+  flex: 1;
+}
+
+.error {
+  color: #c0392b;
+  font-size: 13px;
+}
+
+.primaryButton {
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: #1864ab;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.primaryButton:hover {
+  background: #14548c;
+}
+
+.primaryButton:disabled {
+  background: #9db6cf;
+  cursor: not-allowed;
+}
+
+.secondaryButton {
+  padding: 8px 18px;
+  font-size: 14px;
+  color: #14181f;
+  background: #fff;
+  border: 1px solid #d3dbe8;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.secondaryButton:hover {
+  background: #f0f3f8;
+}

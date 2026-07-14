@@ -1,0 +1,82 @@
+.headerRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+
+.loading {
+  color: #7a8699;
+  font-size: 13px;
+}
+
+.nameCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.colorDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.timesList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.timeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.removeTimeButton {
+  border: none;
+  background: none;
+  color: #c0392b;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.daysMode {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 400;
+  color: #14181f;
+}
+
+.dayChips {
+  display: flex;
+  gap: 6px;
+}
+
+.dayChip,
+.dayChipActive {
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 5px;
+  border: 1px solid #d3dbe8;
+  background: #fff;
+  cursor: pointer;
+}
+
+.dayChipActive {
+  background: #1864ab;
+  color: #fff;
+  border-color: #1864ab;
+}

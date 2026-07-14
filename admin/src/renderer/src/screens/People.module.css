@@ -1,0 +1,30 @@
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.title {
+  font-size: 20px;
+  margin: 0;
+}
+
+.loading {
+  color: #7a8699;
+  font-size: 13px;
+}
+
+.nameLink {
+  border: none;
+  background: none;
+  color: #1864ab;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.nameLink:hover {
+  text-decoration: underline;
+}

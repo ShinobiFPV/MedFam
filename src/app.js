@@ -18,7 +18,20 @@ function createApp(db) {
   // middleware here (single choke point for every /api route below).
   const auth = (req, res, next) => next();
 
+  // The tablet PWA is same-origin (served from this app) and needs no CORS,
+  // but the Electron admin app runs on a different machine and fetches an
+  // absolute cross-origin URL. Permissive is fine here — there's no auth
+  // boundary for CORS to protect either side of.
+  const cors = (req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    if (req.method === 'OPTIONS') return res.sendStatus(204);
+    next();
+  };
+
   const api = express.Router();
+  api.use(cors);
   api.use(auth);
   api.use(healthRoutes(db));
   api.use(peopleRoutes(db));

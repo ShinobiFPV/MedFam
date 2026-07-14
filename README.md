@@ -8,6 +8,9 @@ reference target) — your data stays on your network.
 - **Backend**: Node.js/Express + SQLite (`better-sqlite3`), the single source of truth.
 - **Tablet PWA**: a Vite/React progressive web app served by the same backend at `/` —
   one service, one install, no separate deploy.
+- **Admin app** (`admin/`): a Windows desktop app (Electron) for managing profiles,
+  medications, doctors, and appointments, plus a compliance history view — see
+  [admin/README.md](./admin/README.md).
 - No accounts, no cloud, no telemetry. It's meant to run on a private network (see the
   warning below) and be administered by whoever installs it.
 
@@ -398,6 +401,23 @@ npm test   # vitest: queue enqueue/replay ordering, partial-failure retry,
 Queue and timezone logic is unit-tested (`pwa/src/db/queue.test.ts`,
 `pwa/src/lib/timezone.test.ts`) against `fake-indexeddb`. The screens themselves are
 verified manually against a running API — there's no UI/component test harness yet.
+
+## Admin app (`admin/`)
+
+A Windows desktop app (Electron + React + TypeScript) for day-to-day data management —
+adding/editing people, medications (with a proper time/days schedule editor), doctors,
+and appointments, plus a dose-compliance history view. It's a separate client of the
+same REST API the tablet PWA uses, not a variant of the PWA itself: it runs on your own
+Windows machine and connects to your MedFam server's address (asked once on first
+launch, editable later in Settings) rather than being served same-origin.
+
+Ships as a single Windows installer `.exe` (via `electron-builder`) with built-in
+update checking (`electron-updater`, against this repo's GitHub Releases) — it checks
+periodically, downloads a newer version in the background if found, and prompts before
+restarting to apply it; nothing installs itself without that confirmation.
+
+See [admin/README.md](./admin/README.md) for dev mode, building, and the release
+process.
 
 ## License
 

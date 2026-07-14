@@ -1,0 +1,135 @@
+.controls {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.rangeField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rangeField label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4b5768;
+}
+
+.rangeField input {
+  padding: 7px 9px;
+  border: 1px solid #d3dbe8;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.loadButton {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  background: #1864ab;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.loadButton:hover {
+  background: #14548c;
+}
+
+.rate {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 600;
+  color: #14181f;
+  background: #eef2f8;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.error {
+  color: #c0392b;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.loading,
+.empty {
+  color: #7a8699;
+  font-size: 13px;
+  padding: 20px 0;
+}
+
+.dateList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dateGroup {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.dateHeading {
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  background: #f4f6f9;
+  border-bottom: 1px solid #e5e9f0;
+}
+
+.doseRows {
+  display: flex;
+  flex-direction: column;
+}
+
+.doseRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border-bottom: 1px solid #f0f2f6;
+  font-size: 13px;
+}
+
+.doseRow:last-child {
+  border-bottom: none;
+}
+
+.doseColorDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.doseName {
+  font-weight: 600;
+  min-width: 140px;
+}
+
+.doseDosage {
+  color: #4b5768;
+  min-width: 70px;
+}
+
+.doseTime {
+  color: #4b5768;
+  min-width: 60px;
+}
+
+.statusTaken {
+  margin-left: auto;
+  color: #2b8a3e;
+  font-weight: 600;
+}
+
+.statusMissed {
+  margin-left: auto;
+  color: #7a8699;
+}

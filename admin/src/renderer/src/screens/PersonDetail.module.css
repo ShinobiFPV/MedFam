@@ -1,0 +1,53 @@
+.header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.backButton {
+  border: none;
+  background: none;
+  color: #1864ab;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.backButton:hover {
+  text-decoration: underline;
+}
+
+.name {
+  font-size: 20px;
+  margin: 0;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid #d3dbe8;
+  margin-bottom: 18px;
+}
+
+.tab,
+.tabActive {
+  padding: 8px 14px;
+  font-size: 13px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #4b5768;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.tabActive {
+  color: #1864ab;
+  border-bottom-color: #1864ab;
+  font-weight: 600;
+}
+
+.tab:hover {
+  color: #14181f;
+}
