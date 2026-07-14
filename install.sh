@@ -71,12 +71,14 @@ for arg in "$@"; do
 done
 
 # Reads a prompt from the controlling terminal even when stdin is a curl pipe.
-# Silently falls back to the default if no terminal is available at all
-# (e.g. a fully non-interactive/CI run).
+# Silently falls back to the default if no terminal is available at all (e.g.
+# a fully non-interactive/CI run) — /dev/tty can pass a plain -r test yet
+# still fail to open with ENXIO when there's no controlling terminal at all,
+# so the failure is suppressed rather than just the read's own exit status.
 prompt_default() {
   local question="$1" default="$2" answer=""
   if [ -r /dev/tty ]; then
-    read -r -p "$question [$default]: " answer </dev/tty || true
+    { read -r -p "$question [$default]: " answer </dev/tty; } 2>/dev/null || true
   fi
   echo "${answer:-$default}"
 }
