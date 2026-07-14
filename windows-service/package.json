@@ -1,0 +1,13 @@
+{
+  "name": "medfam-windows-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Registers/removes MedFam as a Windows Service. Kept as its own package so node-windows (Windows-only) never gets installed on the Pi/Linux path.",
+  "scripts": {
+    "install-service": "node install-service.js",
+    "uninstall-service": "node uninstall-service.js"
+  },
+  "dependencies": {
+    "node-windows": "1.0.0-beta.8"
+  }
+}

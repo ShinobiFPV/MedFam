@@ -15,9 +15,11 @@ npm run dev
 ```
 
 Opens the app pointed at whatever server address is saved locally (or the first-run
-setup screen if none is set yet). Point it at a MedFam backend — either your own Pi
-(`http://192.168.1.203:8093` or similar) or a local instance (`cd .. && npm run dev`
-from the root project, and use `http://localhost:8093` here).
+setup screen if none is set yet). Point it at a MedFam backend — your own Pi or Windows
+Server install (`http://192.168.1.203:8093` or similar — see the root README's
+[Windows Server](../README.md#windows-server-no-raspberry-pi-required) section) or a
+local instance (`cd .. && npm run dev` from the root project, and use
+`http://localhost:8093` here).
 
 ## Build
 

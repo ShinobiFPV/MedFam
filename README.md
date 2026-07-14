@@ -2,8 +2,10 @@
 
 A self-hosted family medical information manager: medications, doctors, and
 appointments, with a big-button tablet "Today" view designed for family members who
-aren't especially tech-savvy. Runs on your own hardware (a Raspberry Pi is the
-reference target) — your data stays on your network.
+aren't especially tech-savvy. Runs on your own hardware — a Raspberry Pi is the
+reference target, but a Windows PC works just as well if you don't have a Pi (see
+[Windows Server](#windows-server-no-raspberry-pi-required) below) — your data stays on
+your network.
 
 - **Backend**: Node.js/Express + SQLite (`better-sqlite3`), the single source of truth.
 - **Tablet PWA**: a Vite/React progressive web app served by the same backend at `/` —
@@ -62,10 +64,61 @@ you to confirm a few things along the way (or pass flags to skip the prompts):
 
 When it finishes, it prints the URL to open and a reminder about the warning above.
 
+## Windows Server (no Raspberry Pi required)
+
+Don't have a Pi? MedFam runs the same way on a Windows PC — the backend is plain
+Node.js/Express, so nothing about it is Pi-specific. The PC just needs to stay on and
+reachable on your LAN, the same as a Pi would.
+
+```powershell
+git clone https://github.com/ShinobiFPV/MedFam.git
+cd MedFam
+```
+
+Then, from an **elevated** PowerShell (right-click PowerShell → "Run as
+Administrator") in that folder:
+
+```powershell
+.\install.ps1
+```
+
+This checks for Node.js 18+ (installing it via `winget` if missing), installs
+dependencies, builds the tablet PWA, prompts for a port and timezone, registers MedFam
+as a real **Windows Service** (visible in `services.msc`, starts at boot even before
+anyone logs in, auto-restarts on crash — the Windows analog of the Pi's systemd unit),
+and opens the port in Windows Firewall.
+
+| Flag | Default | Meaning |
+|---|---|---|
+| `-Port N` | `8093` | Port to listen on |
+| `-Timezone Area/City` | auto-detected from the OS | IANA timezone for "what's due today" |
+| `-Update` | — | `git pull`, rebuild, and restart the service in place |
+| `-Uninstall` | — | Stop and remove the service (your data in `data\medfam.db` is untouched) |
+| `-SkipPwaBuild` | — | Skip the PWA rebuild (combine with `-Update` for backend-only changes) |
+
+Manage the service afterwards with the usual PowerShell cmdlets: `Get-Service MedFam`,
+`Restart-Service MedFam`, `Stop-Service MedFam`.
+
+On the tablet, open the LAN URL the installer prints (e.g. `http://192.168.1.50:8093`)
+in the browser — same PWA, same API, nothing PWA-side needs to know or care whether the
+backend is a Pi or a Windows PC. Point the [Admin app](#admin-app-admin)'s Settings →
+Server Address at that same URL.
+
+The same warnings as the Linux install apply: no login, LAN/VPN only, and the PWA's
+offline/install features need HTTPS (see [Tablet PWA](#tablet-pwa-pwa) below) — none of
+that changes just because the server is a PC instead of a Pi.
+
+**Roadmap:** today the tablet needs the Windows PC or Pi reachable to load anything.
+Making the PWA usable fully offline — caching all data locally and syncing with
+whichever server (Windows or Pi) it can next reach — is planned, but is being sequenced
+after a TWA (or native) tablet app, since that's what makes an offline-capable install
+actually installable on the tablet in the first place.
+
 ## Configuration
 
-Set via environment variables (the installer writes these into the systemd unit for
-you — you normally don't need to touch this directly):
+Set via environment variables (the installer writes these into the systemd unit, or
+into the Windows Service's config, for you — you normally don't need to touch this
+directly):
 
 - **`PORT`** — port to listen on. Default `8093`.
 - **`MEDFAM_TIMEZONE`** — an IANA timezone name (e.g. `America/Toronto`,
@@ -73,10 +126,13 @@ you — you normally don't need to touch this directly):
   scheduling and appointment display. **The server refuses to start** if this is set
   to an invalid zone, rather than silently miscomputing every family member's
   schedule. Default `America/Toronto`.
-  - Changing this after install: edit `/etc/systemd/system/medfam.service`, then
-    `sudo systemctl daemon-reload && sudo systemctl restart medfam`. A tablet with a
-    cached "today" view may take up to 5 minutes to pick up the change (the next
-    automatic revalidation) rather than updating instantly.
+  - Changing this after install on Linux: edit `/etc/systemd/system/medfam.service`,
+    then `sudo systemctl daemon-reload && sudo systemctl restart medfam`.
+  - Changing this after install on Windows: port/timezone are baked into the Windows
+    Service at install time — run `.\install.ps1 -Uninstall` then `.\install.ps1
+    -Port N -Timezone Area/City` again (from an elevated PowerShell) to re-register it.
+  - Either way, a tablet with a cached "today" view may take up to 5 minutes to pick up
+    the change (the next automatic revalidation) rather than updating instantly.
 
 ## Stack
 
