@@ -416,6 +416,16 @@ update checking (`electron-updater`, against this repo's GitHub Releases) — it
 periodically, downloads a newer version in the background if found, and prompts before
 restarting to apply it; nothing installs itself without that confirmation.
 
+<table>
+<tr>
+<td align="center" width="50%"><img src="docs/screenshots/admin-people.png" width="380" alt="Admin app — People screen"><br><sub>People</sub></td>
+<td align="center" width="50%"><img src="docs/screenshots/admin-medications.png" width="380" alt="Admin app — Medications screen with schedule editor"><br><sub>Medications, with the time/days schedule editor</sub></td>
+</tr>
+<tr>
+<td align="center" width="50%" colspan="2"><img src="docs/screenshots/admin-compliance.png" width="380" alt="Admin app — Compliance history view"><br><sub>Compliance history</sub></td>
+</tr>
+</table>
+
 See [admin/README.md](./admin/README.md) for dev mode, building, and the release
 process.
 
