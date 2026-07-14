@@ -1,23 +1,23 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
-  border-radius: 8px;
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(74, 135, 196, 0.15);
 }
 
 .table th,
 .table td {
   text-align: left;
   padding: 10px 14px;
-  border-bottom: 1px solid #e5e9f0;
+  border-bottom: 1px solid var(--color-border);
   font-size: 13px;
 }
 
 .table th {
-  background: #f4f6f9;
-  color: #4b5768;
+  background: var(--color-surface-alt);
+  color: var(--color-text-secondary);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -29,7 +29,7 @@
 }
 
 .table tbody tr:hover {
-  background: #f9fafb;
+  background: var(--color-surface-alt);
 }
 
 .actions {
@@ -41,30 +41,30 @@
   margin-left: 6px;
   padding: 4px 10px;
   font-size: 12px;
-  border-radius: 5px;
-  border: 1px solid #d3dbe8;
-  background: #fff;
+  border-radius: var(--radius-button);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
   cursor: pointer;
 }
 
 .actions button:hover {
-  background: #f0f3f8;
+  background: var(--color-surface-alt);
 }
 
 .deleteButton {
-  color: #c0392b;
-  border-color: #f1c2ba !important;
+  color: var(--color-danger);
+  border-color: var(--color-danger-border) !important;
 }
 
 .deleteButton:hover {
-  background: #fdf0ee !important;
+  background: var(--color-danger-bg) !important;
 }
 
 .empty {
   padding: 40px 20px;
   text-align: center;
-  color: #7a8699;
+  color: var(--color-text-secondary);
   font-size: 14px;
-  background: #fff;
-  border-radius: 8px;
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
 }

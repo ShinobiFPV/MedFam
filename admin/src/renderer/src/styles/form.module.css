@@ -7,7 +7,7 @@
 .field label {
   font-size: 12px;
   font-weight: 600;
-  color: #4b5768;
+  color: var(--color-text-secondary);
 }
 
 .field input,
@@ -16,10 +16,10 @@
   font: inherit;
   font-size: 14px;
   padding: 8px 10px;
-  border: 1px solid #d3dbe8;
-  border-radius: 6px;
-  background: #fff;
-  color: #14181f;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  background: var(--color-surface);
+  color: var(--color-text);
 }
 
 .field textarea {
@@ -37,7 +37,7 @@
 }
 
 .error {
-  color: #c0392b;
+  color: var(--color-danger);
   font-size: 13px;
 }
 
@@ -45,32 +45,33 @@
   padding: 8px 18px;
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
-  background: #1864ab;
+  color: #ffffff;
+  background: var(--color-primary);
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-button);
   cursor: pointer;
 }
 
 .primaryButton:hover {
-  background: #14548c;
+  background: var(--color-primary-dark);
 }
 
 .primaryButton:disabled {
-  background: #9db6cf;
+  background: var(--color-border);
+  color: var(--color-text-secondary);
   cursor: not-allowed;
 }
 
 .secondaryButton {
   padding: 8px 18px;
   font-size: 14px;
-  color: #14181f;
-  background: #fff;
-  border: 1px solid #d3dbe8;
-  border-radius: 6px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
   cursor: pointer;
 }
 
 .secondaryButton:hover {
-  background: #f0f3f8;
+  background: var(--color-surface-alt);
 }

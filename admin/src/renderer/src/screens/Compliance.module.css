@@ -14,13 +14,13 @@
 .rangeField label {
   font-size: 12px;
   font-weight: 600;
-  color: #4b5768;
+  color: var(--color-text-secondary);
 }
 
 .rangeField input {
   padding: 7px 9px;
-  border: 1px solid #d3dbe8;
-  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
   font-size: 13px;
 }
 
@@ -28,36 +28,36 @@
   padding: 8px 16px;
   font-size: 13px;
   font-weight: 600;
-  color: #fff;
-  background: #1864ab;
+  color: #ffffff;
+  background: var(--color-primary);
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-button);
   cursor: pointer;
 }
 
 .loadButton:hover {
-  background: #14548c;
+  background: var(--color-primary-dark);
 }
 
 .rate {
   margin-left: auto;
   font-size: 13px;
   font-weight: 600;
-  color: #14181f;
-  background: #eef2f8;
+  color: var(--color-text);
+  background: var(--color-surface-alt);
   padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: var(--radius-button);
 }
 
 .error {
-  color: #c0392b;
+  color: var(--color-danger);
   font-size: 13px;
   margin-bottom: 12px;
 }
 
 .loading,
 .empty {
-  color: #7a8699;
+  color: var(--color-text-secondary);
   font-size: 13px;
   padding: 20px 0;
 }
@@ -69,9 +69,9 @@
 }
 
 .dateGroup {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  box-shadow: 0 1px 3px rgba(74, 135, 196, 0.15);
   overflow: hidden;
 }
 
@@ -79,8 +79,9 @@
   padding: 10px 14px;
   font-size: 13px;
   font-weight: 700;
-  background: #f4f6f9;
-  border-bottom: 1px solid #e5e9f0;
+  background: var(--color-surface-alt);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
 }
 
 .doseRows {
@@ -93,7 +94,7 @@
   align-items: center;
   gap: 10px;
   padding: 8px 14px;
-  border-bottom: 1px solid #f0f2f6;
+  border-bottom: 1px solid var(--color-border);
   font-size: 13px;
 }
 
@@ -114,22 +115,22 @@
 }
 
 .doseDosage {
-  color: #4b5768;
+  color: var(--color-text-secondary);
   min-width: 70px;
 }
 
 .doseTime {
-  color: #4b5768;
+  color: var(--color-text-secondary);
   min-width: 60px;
 }
 
 .statusTaken {
   margin-left: auto;
-  color: #2b8a3e;
+  color: var(--color-done-check);
   font-weight: 600;
 }
 
 .statusMissed {
   margin-left: auto;
-  color: #7a8699;
+  color: var(--color-text-secondary);
 }

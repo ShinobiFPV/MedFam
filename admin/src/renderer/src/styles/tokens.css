@@ -1,0 +1,29 @@
+:root {
+  /* Pastel palette — kept identical to the tablet PWA's tokens
+     (pwa/src/styles/tokens.css) so both clients read as one product.
+     Text/button pairings are the same ones spot-checked there for
+     WCAG contrast; this app isn't as accessibility-critical as the
+     tablet PWA, but there's no reason to be less careful. */
+  --color-bg: #e8f1fb;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f3f8fe;
+  --color-surface-done: #dff3e6;
+  --color-text: #243347;
+  --color-text-secondary: #5c6b84;
+  --color-primary: #4a87c4;
+  --color-primary-dark: #356090;
+  --color-banner: #c96a30;
+  --color-banner-text: #ffffff;
+  --color-border: #d3e3f5;
+  --color-done-check: #2f9e5b;
+  --color-focus-ring: #4a87c4;
+  --color-warning-bg: #fcefdd;
+  --color-warning-border: #e8b073;
+  --color-danger: #c65c5c;
+  --color-danger-bg: #fbeaea;
+  --color-danger-border: #f0c6c6;
+
+  --radius-card: 8px;
+  --radius-modal: 10px;
+  --radius-button: 6px;
+}

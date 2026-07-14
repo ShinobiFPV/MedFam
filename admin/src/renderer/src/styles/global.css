@@ -1,3 +1,5 @@
+@import './tokens.css';
+
 * {
   box-sizing: border-box;
 }
@@ -17,6 +19,6 @@ body {
     Roboto,
     sans-serif;
   font-size: 14px;
-  color: #14181f;
-  background: #f4f6f9;
+  color: var(--color-text);
+  background: var(--color-bg);
 }

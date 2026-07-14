@@ -8,7 +8,7 @@
 .backButton {
   border: none;
   background: none;
-  color: #1864ab;
+  color: var(--color-primary);
   font-size: 13px;
   cursor: pointer;
   padding: 0;
@@ -21,12 +21,13 @@
 .name {
   font-size: 20px;
   margin: 0;
+  color: var(--color-text);
 }
 
 .tabs {
   display: flex;
   gap: 4px;
-  border-bottom: 1px solid #d3dbe8;
+  border-bottom: 1px solid var(--color-border);
   margin-bottom: 18px;
 }
 
@@ -37,17 +38,17 @@
   border: none;
   background: none;
   cursor: pointer;
-  color: #4b5768;
+  color: var(--color-text-secondary);
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
 }
 
 .tabActive {
-  color: #1864ab;
-  border-bottom-color: #1864ab;
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
   font-weight: 600;
 }
 
 .tab:hover {
-  color: #14181f;
+  color: var(--color-text);
 }

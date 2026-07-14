@@ -8,17 +8,18 @@
 .title {
   font-size: 20px;
   margin: 0;
+  color: var(--color-text);
 }
 
 .loading {
-  color: #7a8699;
+  color: var(--color-text-secondary);
   font-size: 13px;
 }
 
 .nameLink {
   border: none;
   background: none;
-  color: #1864ab;
+  color: var(--color-primary);
   font-weight: 600;
   font-size: 13px;
   cursor: pointer;
