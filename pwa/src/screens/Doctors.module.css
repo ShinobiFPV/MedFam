@@ -1,0 +1,88 @@
+.screen {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: var(--space-3) var(--space-3) var(--space-2);
+  text-align: center;
+}
+
+.title {
+  font-size: var(--font-xl);
+  font-weight: 800;
+  margin: 0;
+}
+
+.content {
+  flex: 1;
+  padding: 0 var(--space-2);
+  padding-bottom: calc(var(--tap-primary) + var(--space-4) + env(safe-area-inset-bottom));
+}
+
+.empty {
+  margin-top: var(--space-5);
+  text-align: center;
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid #c4c4c4;
+  border-radius: var(--radius-card);
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.name {
+  font-size: var(--font-lg);
+  font-weight: 800;
+}
+
+.specialty {
+  font-size: var(--font-base);
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+
+.detail {
+  display: block;
+  font-size: var(--font-base);
+  color: var(--color-text);
+  margin-top: var(--space-1);
+  text-decoration: none;
+}
+
+.notes {
+  font-size: var(--font-base);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-1);
+}
+
+.apptNote {
+  margin-top: var(--space-2);
+  padding: var(--space-2);
+  background: var(--color-surface-done);
+  color: var(--color-done-check);
+  border-radius: 8px;
+  font-size: var(--font-base);
+  font-weight: 700;
+}
+
+.backButton {
+  position: fixed;
+  left: var(--space-2);
+  right: var(--space-2);
+  bottom: calc(var(--space-2) + env(safe-area-inset-bottom));
+  min-height: var(--tap-primary);
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--color-primary-dark);
+  border: none;
+  border-radius: var(--radius-button);
+  box-shadow: 0 4px 16px rgba(24, 100, 171, 0.35);
+}

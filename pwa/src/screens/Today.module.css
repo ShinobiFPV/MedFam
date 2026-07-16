@@ -64,17 +64,30 @@
   color: var(--color-text-secondary);
 }
 
-.upcomingButton {
+.bottomBar {
   position: fixed;
   left: var(--space-2);
   right: var(--space-2);
   bottom: calc(var(--space-2) + env(safe-area-inset-bottom));
+  display: flex;
+  gap: var(--space-2);
+}
+
+.bottomButton {
+  flex: 1;
   min-height: var(--tap-primary);
   font-size: var(--font-lg);
   font-weight: 700;
   color: #ffffff;
-  background: var(--color-primary);
   border: none;
   border-radius: var(--radius-button);
   box-shadow: 0 4px 16px rgba(24, 100, 171, 0.35);
+}
+
+.upcomingButton {
+  background: var(--color-primary);
+}
+
+.doctorsButton {
+  background: var(--color-primary-dark);
 }

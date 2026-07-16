@@ -13,6 +13,7 @@ import styles from './Today.module.css';
 
 interface TodayScreenProps {
   onOpenAppointments: () => void;
+  onOpenDoctors: () => void;
   onOpenSettings: () => void;
 }
 
@@ -22,7 +23,7 @@ const SECTION_ORDER: Array<{ key: 'morning' | 'afternoon' | 'evening'; label: st
   { key: 'evening', label: 'Evening' },
 ];
 
-export function TodayScreen({ onOpenAppointments, onOpenSettings }: TodayScreenProps) {
+export function TodayScreen({ onOpenAppointments, onOpenDoctors, onOpenSettings }: TodayScreenProps) {
   const { person, personId } = usePerson();
   const { today, loading, toggleDose } = useToday(personId);
   const doctors = useDoctors(personId);
@@ -91,9 +92,14 @@ export function TodayScreen({ onOpenAppointments, onOpenSettings }: TodayScreenP
         )}
       </main>
 
-      <button type="button" className={styles.upcomingButton} onClick={onOpenAppointments}>
-        Upcoming Appointments
-      </button>
+      <div className={styles.bottomBar}>
+        <button type="button" className={`${styles.bottomButton} ${styles.upcomingButton}`} onClick={onOpenAppointments}>
+          Upcoming Appointments
+        </button>
+        <button type="button" className={`${styles.bottomButton} ${styles.doctorsButton}`} onClick={onOpenDoctors}>
+          My Doctors
+        </button>
+      </div>
 
       <DescriptionSheet dose={infoDose} onClose={() => setInfoDose(null)} />
     </div>

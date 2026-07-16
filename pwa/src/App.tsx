@@ -5,9 +5,10 @@ import { QueueProvider } from './context/QueueContext';
 import { PersonPickerScreen } from './screens/PersonPicker';
 import { TodayScreen } from './screens/Today';
 import { AppointmentsScreen } from './screens/Appointments';
+import { DoctorsScreen } from './screens/Doctors';
 import { SettingsScreen } from './screens/Settings';
 
-type Screen = 'today' | 'appointments' | 'settings';
+type Screen = 'today' | 'appointments' | 'doctors' | 'settings';
 
 function Router() {
   const { personId } = usePerson();
@@ -20,6 +21,8 @@ function Router() {
   switch (screen) {
     case 'appointments':
       return <AppointmentsScreen onBack={() => setScreen('today')} />;
+    case 'doctors':
+      return <DoctorsScreen onBack={() => setScreen('today')} />;
     case 'settings':
       return <SettingsScreen onBack={() => setScreen('today')} />;
     case 'today':
@@ -27,6 +30,7 @@ function Router() {
       return (
         <TodayScreen
           onOpenAppointments={() => setScreen('appointments')}
+          onOpenDoctors={() => setScreen('doctors')}
           onOpenSettings={() => setScreen('settings')}
         />
       );
