@@ -10,13 +10,17 @@ type Screen = 'people' | 'person' | 'settings';
 
 export default function App() {
   const [serverConfigured, setServerConfigured] = useState<boolean | null>(null);
+  const [serverAddress, setServerAddress] = useState('');
   const [screen, setScreen] = useState<Screen>('people');
   const [selectedPersonId, setSelectedPersonId] = useState<number | null>(null);
   const [selectedPersonName, setSelectedPersonName] = useState('');
 
   useEffect(() => {
-    getBaseUrl().then((url) => setServerConfigured(!!url));
-  }, []);
+    getBaseUrl().then((url) => {
+      setServerConfigured(!!url);
+      setServerAddress(url);
+    });
+  }, [screen]);
 
   if (serverConfigured === null) {
     return <div className={styles.loading}>Loading…</div>;
@@ -30,6 +34,9 @@ export default function App() {
     <div className={styles.shell}>
       <nav className={styles.sidebar}>
         <div className={styles.brand}>MedFam Admin</div>
+        <div className={styles.serverAddress} title={serverAddress}>
+          {serverAddress}
+        </div>
         <button
           type="button"
           className={screen === 'people' ? styles.navActive : styles.navItem}
