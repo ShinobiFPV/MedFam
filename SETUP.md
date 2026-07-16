@@ -66,8 +66,10 @@ curl http://localhost:8093/api/health
 
 MedFam listens standalone on port **8093** — no nginx location block is required.
 Access is over Tailscale only for Phase 1 (same model as the 8091/8092 services), so
-there's no reverse proxy or TLS termination to configure. If you later want it behind
-the existing nginx setup instead of a bare port, add something like:
+there's no reverse proxy to configure for plain access — `shinobi`'s Tailscale IP or
+MagicDNS name on port 8093 is reachable from any device on the tailnet, whether it's
+on the home LAN or out and about. If you later want it behind the existing nginx setup
+instead of a bare port, add something like:
 
 ```nginx
 location /medfam/ {
@@ -79,12 +81,24 @@ location /medfam/ {
 
 ...and reload nginx (`sudo systemctl reload nginx`). Not needed by default.
 
-**Important:** the PWA's service worker (offline caching, "Add to Home Screen") only
-registers in a secure context — HTTPS or `localhost`. Plain HTTP over a Tailscale IP
-does not qualify, so none of the offline/installable behavior will work on the tablets
-until the origin is HTTPS. `tailscale cert <hostname>` gets you a free cert for the
-Pi's tailnet name; see the root README's "Tablet PWA" section for details. This isn't
-needed to use the API or view the PWA online — only for offline/install.
+**HTTPS, for full offline/install support:** the PWA's service worker (offline
+caching, "Add to Home Screen") only registers in a secure context — HTTPS or
+`localhost`. Plain HTTP over a Tailscale IP does not qualify, so none of the
+offline/installable behavior works on the tablets until the origin is HTTPS. Run this
+once (requires MagicDNS + "HTTPS Certificates" enabled for the tailnet — see
+https://tailscale.com/kb/1153/enabling-https):
+
+```bash
+cd /home/shinobi/medfam
+./scripts/tailscale-serve.sh 8093
+```
+
+This uses `tailscale serve` to reverse-proxy `https://shinobi.<tailnet>.ts.net` (port
+443, tailnet-only — nothing is exposed publicly) to `localhost:8093`. Tailscale
+issues and renews the certificate itself and the config survives reboots, so it's a
+one-time step. Point tablets and the Admin app's Server Address at that `https://` URL
+instead of the raw `http://<tailscale-ip>:8093`. Not needed just to use the API or
+view the PWA online — only for offline/install.
 
 ## 6. Ongoing deploys
 

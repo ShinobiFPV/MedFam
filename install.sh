@@ -270,8 +270,11 @@ MedFam has no login. Do not expose this port to the public internet — put it
 behind Tailscale, WireGuard, or keep it on your private LAN only.
 
 The tablet PWA's offline/install features need HTTPS to work (plain HTTP
-won't register a service worker) — see the README for a "tailscale cert"
-based setup if you want that.
+won't register a service worker). If you're on Tailscale, run this once to
+fix that and make MedFam reachable from anywhere on your tailnet, not just
+your LAN:
+
+  $MEDFAM_DIR/scripts/tailscale-serve.sh $MEDFAM_PORT
 
 To update later: install.sh --update
 SUMMARY

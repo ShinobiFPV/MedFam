@@ -463,9 +463,25 @@ service worker in Chrome**, so none of the offline/install behavior above will
 actually engage until the origin is HTTPS. `npm run dev` and `vite preview` work fine
 for this today because `localhost` is exempt.
 
-If you're using Tailscale, `tailscale cert <your-tailnet-name>` gets you a free
-certificate for your Tailscale hostname — terminate TLS with it (either directly in
-Express, or via `tailscale serve`) to unlock the offline/install features.
+If you're using Tailscale, the easiest fix is `tailscale serve`, which reverse-proxies
+HTTPS on your tailnet to MedFam's plain-HTTP port and handles certificate issuance and
+renewal for you — nothing is exposed outside your tailnet. Run once, on the machine
+running MedFam (requires MagicDNS + ["HTTPS Certificates"](https://tailscale.com/kb/1153/enabling-https)
+enabled for your tailnet):
+
+```bash
+./scripts/tailscale-serve.sh          # Pi/Linux — defaults to backend port 8093, HTTPS on 443
+.\scripts\tailscale-serve.ps1         # Windows
+```
+
+Pass a second argument (`-HttpsPort` on Windows) if 443 is already used by another `tailscale serve`/`funnel` target on the same machine — check first with `tailscale serve status`.
+
+Then point tablets and the Admin app's Server Address at the printed
+`https://<host>.<tailnet>.ts.net` URL instead of `http://<tailscale-ip>:8093` — that
+also means the tablet and Admin app work this way from **anywhere on your tailnet**,
+not just your home LAN. This is a one-time step; the serve config and certificate
+renewal persist across reboots. (`tailscale cert <hostname>` is the manual
+alternative if you'd rather terminate TLS yourself, e.g. directly in Express.)
 
 ### PWA testing
 

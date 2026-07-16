@@ -259,7 +259,9 @@ Write-Host "This PC needs to stay powered on (Settings -> Power -> disable sleep
 Write-Host "to be reachable -- the service itself starts automatically at boot regardless of login." -ForegroundColor Gray
 Write-Host ""
 Write-Host "The tablet PWA's offline/install features need HTTPS (plain HTTP over a LAN IP" -ForegroundColor Gray
-Write-Host "won't register a service worker) -- see the README's Tablet PWA section." -ForegroundColor Gray
+Write-Host "won't register a service worker). If you're on Tailscale, run this once to fix" -ForegroundColor Gray
+Write-Host "that and make MedFam reachable from anywhere on your tailnet, not just your LAN:" -ForegroundColor Gray
+Write-Host "  $RepoRoot\scripts\tailscale-serve.ps1 -Port $Port" -ForegroundColor Gray
 Write-Host ""
 Write-Host "To update later: .\install.ps1 -Update" -ForegroundColor Gray
 Write-Host "To remove:       .\install.ps1 -Uninstall" -ForegroundColor Gray
