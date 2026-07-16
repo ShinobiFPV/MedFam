@@ -38,19 +38,21 @@
   --tap-card: 88px;
 }
 
-/* Large: the spec's stated floor (20px base). Extra Large (default): ~1.25x. */
+/* Extra Large (default) is the spec's stated floor (20px base) -- what used to
+   be "Large" before Extra Large was found to be too big at the old, larger
+   sizes. Large is a new, slightly smaller tier below that (~0.85x). */
 html.text-size-large {
+  --font-base: 17px;
+  --font-md: 20px;
+  --font-lg: 27px;
+  --font-xl: 37px;
+  --font-xxl: 51px;
+}
+
+html.text-size-xl {
   --font-base: 20px;
   --font-md: 24px;
   --font-lg: 32px;
   --font-xl: 44px;
   --font-xxl: 60px;
-}
-
-html.text-size-xl {
-  --font-base: 25px;
-  --font-md: 30px;
-  --font-lg: 40px;
-  --font-xl: 55px;
-  --font-xxl: 75px;
 }

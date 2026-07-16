@@ -31,6 +31,7 @@
 
 .card {
   background: var(--color-surface);
+  border: 1px solid #c4c4c4;
   border-radius: var(--radius-card);
   padding: var(--space-3);
   margin-bottom: var(--space-3);

@@ -4,6 +4,7 @@
   align-items: stretch;
   min-height: var(--tap-card);
   background: var(--color-surface);
+  border: 1px solid #c4c4c4;
   border-radius: var(--radius-card);
   margin-bottom: var(--space-2);
   overflow: hidden;
