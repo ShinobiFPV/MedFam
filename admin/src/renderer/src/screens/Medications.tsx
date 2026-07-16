@@ -22,6 +22,7 @@ const DAY_LABELS: Array<{ key: string; label: string }> = [
 
 interface MedicationFormState {
   name: string;
+  brandName: string;
   dosage: string;
   color: string;
   description: string;
@@ -33,6 +34,7 @@ interface MedicationFormState {
 
 const EMPTY_FORM: MedicationFormState = {
   name: '',
+  brandName: '',
   dosage: '',
   color: '#4C6EF5',
   description: '',
@@ -99,6 +101,7 @@ export function MedicationsScreen({ personId }: MedicationsScreenProps) {
   const openEdit = (med: Medication) => {
     setForm({
       name: med.name,
+      brandName: med.brand_name || '',
       dosage: med.dosage || '',
       color: med.color || '#4C6EF5',
       description: med.description || '',
@@ -153,6 +156,7 @@ export function MedicationsScreen({ personId }: MedicationsScreenProps) {
       const payload = {
         person_id: personId,
         name: form.name.trim(),
+        brand_name: form.brandName.trim() || null,
         dosage: form.dosage || null,
         color: form.color || null,
         description: form.description || null,
@@ -203,6 +207,7 @@ export function MedicationsScreen({ personId }: MedicationsScreenProps) {
                 <span className={styles.nameCell}>
                   <span className={styles.colorDot} style={{ background: m.color || '#ccc' }} />
                   {m.name}
+                  {m.brand_name && <span className={styles.brandName}> ({m.brand_name})</span>}
                 </span>
               ),
             },
@@ -237,6 +242,15 @@ export function MedicationsScreen({ personId }: MedicationsScreenProps) {
             <div className={formStyles.field}>
               <label htmlFor="med-name">Name</label>
               <input id="med-name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            </div>
+            <div className={formStyles.field}>
+              <label htmlFor="med-brand-name">Brand name</label>
+              <input
+                id="med-brand-name"
+                value={form.brandName}
+                onChange={(e) => setForm({ ...form, brandName: e.target.value })}
+                placeholder="Tylenol"
+              />
             </div>
             <div className={formStyles.field}>
               <label htmlFor="med-dosage">Dosage</label>

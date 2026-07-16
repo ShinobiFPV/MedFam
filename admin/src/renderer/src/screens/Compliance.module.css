@@ -106,6 +106,7 @@
   width: 9px;
   height: 9px;
   border-radius: 50%;
+  border: 1px solid #c4c4c4;
   flex-shrink: 0;
 }
 

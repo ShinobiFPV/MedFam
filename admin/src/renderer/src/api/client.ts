@@ -54,7 +54,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
 type NewPerson = Pick<Person, 'name'> & Partial<Pick<Person, 'date_of_birth' | 'notes'>>;
 type NewMedication = Pick<Medication, 'person_id' | 'name' | 'schedule_json'> &
-  Partial<Pick<Medication, 'dosage' | 'color' | 'description' | 'active'>>;
+  Partial<Pick<Medication, 'brand_name' | 'dosage' | 'color' | 'description' | 'active'>>;
 type NewDoctor = Pick<Doctor, 'person_id' | 'name'> & Partial<Pick<Doctor, 'specialty' | 'phone' | 'address' | 'notes'>>;
 type NewAppointment = Pick<Appointment, 'person_id' | 'datetime_utc'> &
   Partial<Pick<Appointment, 'doctor_id' | 'location' | 'prep_notes'>>;

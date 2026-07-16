@@ -16,10 +16,16 @@
   font-weight: 600;
 }
 
+.brandName {
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
 .colorDot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
+  border: 1px solid #c4c4c4;
   flex-shrink: 0;
 }
 

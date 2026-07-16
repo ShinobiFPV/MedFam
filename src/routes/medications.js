@@ -38,7 +38,7 @@ module.exports = function medicationRoutes(db) {
   });
 
   router.post('/medications', (req, res) => {
-    const { person_id, name, dosage, color, description, schedule_json, active } = req.body || {};
+    const { person_id, name, brand_name, dosage, color, description, schedule_json, active } = req.body || {};
     if (!person_id || !name || !schedule_json) {
       return res.status(400).json({ error: 'person_id, name, and schedule_json are required' });
     }
@@ -51,11 +51,20 @@ module.exports = function medicationRoutes(db) {
     const info = db
       .prepare(
         `
-        INSERT INTO medications (person_id, name, dosage, color, description, schedule_json, active)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO medications (person_id, name, brand_name, dosage, color, description, schedule_json, active)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `
       )
-      .run(person_id, name, dosage || null, color || null, description || null, scheduleStr, active === 0 ? 0 : 1);
+      .run(
+        person_id,
+        name,
+        brand_name || null,
+        dosage || null,
+        color || null,
+        description || null,
+        scheduleStr,
+        active === 0 ? 0 : 1
+      );
     res.status(201).json(db.prepare('SELECT * FROM medications WHERE id = ?').get(info.lastInsertRowid));
   });
 
@@ -63,7 +72,7 @@ module.exports = function medicationRoutes(db) {
     const med = db.prepare('SELECT * FROM medications WHERE id = ?').get(req.params.id);
     if (!med) return res.status(404).json({ error: 'Medication not found' });
 
-    const { person_id, name, dosage, color, description, schedule_json, active } = req.body || {};
+    const { person_id, name, brand_name, dosage, color, description, schedule_json, active } = req.body || {};
     if (person_id !== undefined && !personExists(db, person_id)) {
       return res.status(400).json({ error: `person_id ${person_id} does not exist` });
     }
@@ -76,12 +85,13 @@ module.exports = function medicationRoutes(db) {
     db.prepare(
       `
       UPDATE medications
-      SET person_id = ?, name = ?, dosage = ?, color = ?, description = ?, schedule_json = ?, active = ?
+      SET person_id = ?, name = ?, brand_name = ?, dosage = ?, color = ?, description = ?, schedule_json = ?, active = ?
       WHERE id = ?
     `
     ).run(
       person_id !== undefined ? person_id : med.person_id,
       name !== undefined ? name : med.name,
+      brand_name !== undefined ? brand_name : med.brand_name,
       dosage !== undefined ? dosage : med.dosage,
       color !== undefined ? color : med.color,
       description !== undefined ? description : med.description,

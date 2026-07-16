@@ -10,6 +10,7 @@ export interface Medication {
   id: number;
   person_id: number;
   name: string;
+  brand_name: string | null;
   dosage: string | null;
   color: string | null;
   description: string | null;
