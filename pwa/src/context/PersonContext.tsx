@@ -46,25 +46,43 @@ export function PersonProvider({ children }: { children: ReactNode }) {
   const [personId, setPersonId] = useState<number | null>(() => readStoredPersonId());
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    let cancelled = false;
-    api
+  const fetchPeople = useCallback(() => {
+    return api
       .getPeople()
       .then((list) => {
-        if (cancelled) return;
         setPeople(list);
         localStorage.setItem(PEOPLE_CACHE_KEY, JSON.stringify(list));
       })
       .catch(() => {
-        // offline on first load: keep whatever cached list we already have
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
+        // offline: keep whatever cached list we already have
       });
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchPeople().finally(() => {
+      if (!cancelled) setLoading(false);
+    });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [fetchPeople]);
+
+  // Independent of the mount fetch above: a transient failure on first load
+  // (server not up yet, brief network blip) would otherwise leave the picker
+  // stuck empty forever, since this context has no periodic revalidation.
+  // Re-fetching on focus/visibility mirrors useToday's behavior.
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') fetchPeople();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', fetchPeople);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', fetchPeople);
+    };
+  }, [fetchPeople]);
 
   // Independent of the people-fetch effect above, so a /health failure never
   // blocks the person list (and vice versa).
