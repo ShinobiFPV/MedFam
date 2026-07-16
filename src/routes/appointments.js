@@ -1,5 +1,7 @@
+const crypto = require('crypto');
 const express = require('express');
 const { personExists, doctorExists } = require('../lib/validate');
+const { isValidRecurrence, expandRecurrence } = require('../lib/recurrence');
 
 function normalizeDate(value, res) {
   const d = new Date(value);
@@ -28,7 +30,7 @@ module.exports = function appointmentRoutes(db) {
   });
 
   router.post('/appointments', (req, res) => {
-    const { person_id, doctor_id, datetime_utc, location, prep_notes } = req.body || {};
+    const { person_id, doctor_id, datetime_utc, location, prep_notes, recurrence } = req.body || {};
     if (!person_id || !datetime_utc) {
       return res.status(400).json({ error: 'person_id and datetime_utc are required' });
     }
@@ -41,15 +43,46 @@ module.exports = function appointmentRoutes(db) {
     const iso = normalizeDate(datetime_utc, res);
     if (iso === undefined) return;
 
-    const info = db
-      .prepare(
-        `
-        INSERT INTO appointments (person_id, doctor_id, datetime_utc, location, prep_notes)
-        VALUES (?, ?, ?, ?, ?)
+    let occurrences = [iso];
+    let seriesId = null;
+    let recurrenceRule = null;
+    if (recurrence !== undefined && recurrence !== null) {
+      if (!isValidRecurrence(recurrence)) {
+        return res.status(400).json({
+          error:
+            'recurrence must have unit ("week"|"month"|"year"), interval (1-12), and count (2-52)',
+        });
+      }
+      const { unit, interval, count } = recurrence;
+      occurrences = expandRecurrence(iso, { unit, interval, count });
+      seriesId = crypto.randomUUID();
+      recurrenceRule = JSON.stringify({ unit, interval, count });
+    }
+
+    const insert = db.prepare(
       `
-      )
-      .run(person_id, doctor_id || null, iso, location || null, prep_notes || null);
-    res.status(201).json(db.prepare('SELECT * FROM appointments WHERE id = ?').get(info.lastInsertRowid));
+      INSERT INTO appointments (person_id, doctor_id, datetime_utc, location, prep_notes, series_id, recurrence_rule)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `
+    );
+    const insertAll = db.transaction((isoDates) => {
+      let firstId;
+      for (const isoDate of isoDates) {
+        const info = insert.run(
+          person_id,
+          doctor_id || null,
+          isoDate,
+          location || null,
+          prep_notes || null,
+          seriesId,
+          recurrenceRule
+        );
+        if (firstId === undefined) firstId = info.lastInsertRowid;
+      }
+      return firstId;
+    });
+    const firstId = insertAll(occurrences);
+    res.status(201).json(db.prepare('SELECT * FROM appointments WHERE id = ?').get(firstId));
   });
 
   router.put('/appointments/:id', (req, res) => {
@@ -86,8 +119,17 @@ module.exports = function appointmentRoutes(db) {
   });
 
   router.delete('/appointments/:id', (req, res) => {
-    const info = db.prepare('DELETE FROM appointments WHERE id = ?').run(req.params.id);
-    if (info.changes === 0) return res.status(404).json({ error: 'Appointment not found' });
+    const appt = db.prepare('SELECT * FROM appointments WHERE id = ?').get(req.params.id);
+    if (!appt) return res.status(404).json({ error: 'Appointment not found' });
+
+    if (req.query.scope === 'future' && appt.series_id) {
+      db.prepare('DELETE FROM appointments WHERE series_id = ? AND datetime_utc >= ?').run(
+        appt.series_id,
+        appt.datetime_utc
+      );
+    } else {
+      db.prepare('DELETE FROM appointments WHERE id = ?').run(req.params.id);
+    }
     res.status(204).end();
   });
 

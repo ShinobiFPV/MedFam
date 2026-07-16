@@ -38,7 +38,15 @@ export interface Appointment {
   location: string | null;
   prep_notes: string | null;
   confirmed_at: string | null;
+  series_id: string | null;
+  recurrence_rule: string | null;
   created_at: string;
+}
+
+export interface RecurrenceRule {
+  unit: 'week' | 'month' | 'year';
+  interval: number;
+  count: number;
 }
 
 export interface DoseHistoryEntry {

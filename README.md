@@ -170,7 +170,7 @@ people        (id, name, date_of_birth, notes, created_at)
 medications   (id, person_id, name, brand_name, dosage, color, description, schedule_json, active, created_at)
 dose_events   (id [client UUID], medication_id, scheduled_date, scheduled_time, taken_at, created_at)
 doctors       (id, person_id, name, specialty, phone, address, notes, created_at)
-appointments  (id, person_id, doctor_id, datetime_utc, location, prep_notes, confirmed_at, created_at)
+appointments  (id, person_id, doctor_id, datetime_utc, location, prep_notes, confirmed_at, series_id, recurrence_rule, created_at)
 ```
 
 `schedule_json` supports two shapes:
@@ -179,6 +179,12 @@ appointments  (id, person_id, doctor_id, datetime_utc, location, prep_notes, con
 {"times": ["08:00", "20:00"], "days": "daily"}
 {"times": ["21:00"], "days": ["mon", "wed", "fri"]}
 ```
+
+Recurring appointments are materialized up front, like `dose_events` are for
+medications: creating an appointment with a `recurrence` rule inserts one row per
+occurrence, all sharing a `series_id` and carrying the same `recurrence_rule` JSON
+(`{"unit": "week"|"month"|"year", "interval": 1-12, "count": 2-52}`). Each occurrence
+can be confirmed, edited, or deleted independently.
 
 ## API reference
 
@@ -300,13 +306,27 @@ curl -X POST http://localhost:8093/api/appointments \
     "prep_notes": "Bring blood pressure log."
   }'
 
-# Update
+# Create a recurring series (materializes one row per occurrence, sharing a series_id)
+curl -X POST http://localhost:8093/api/appointments \
+  -H "Content-Type: application/json" \
+  -d '{
+    "person_id": 1,
+    "doctor_id": 1,
+    "datetime_utc": "2026-08-01T14:30:00Z",
+    "location": "123 Main St, Springfield",
+    "recurrence": {"unit": "month", "interval": 3, "count": 4}
+  }'
+
+# Update (edits just this occurrence)
 curl -X PUT http://localhost:8093/api/appointments/1 \
   -H "Content-Type: application/json" \
   -d '{"location":"New clinic address"}'
 
-# Delete
+# Delete just this occurrence
 curl -X DELETE http://localhost:8093/api/appointments/1
+
+# Delete this and every later occurrence in its series
+curl -X DELETE "http://localhost:8093/api/appointments/1?scope=future"
 
 # Confirm (idempotent)
 curl -X PUT http://localhost:8093/api/appointments/1/confirm

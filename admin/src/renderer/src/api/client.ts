@@ -1,4 +1,4 @@
-import type { Appointment, Doctor, DoseHistoryEntry, Medication, Person } from '../types';
+import type { Appointment, Doctor, DoseHistoryEntry, Medication, Person, RecurrenceRule } from '../types';
 
 export class ApiError extends Error {
   status: number;
@@ -57,7 +57,7 @@ type NewMedication = Pick<Medication, 'person_id' | 'name' | 'schedule_json'> &
   Partial<Pick<Medication, 'brand_name' | 'dosage' | 'color' | 'description' | 'active'>>;
 type NewDoctor = Pick<Doctor, 'person_id' | 'name'> & Partial<Pick<Doctor, 'specialty' | 'phone' | 'address' | 'notes'>>;
 type NewAppointment = Pick<Appointment, 'person_id' | 'datetime_utc'> &
-  Partial<Pick<Appointment, 'doctor_id' | 'location' | 'prep_notes'>>;
+  Partial<Pick<Appointment, 'doctor_id' | 'location' | 'prep_notes'>> & { recurrence?: RecurrenceRule };
 
 export const api = {
   health: () => request<{ status: string; db: string; timezone: string }>('/health'),
@@ -86,7 +86,8 @@ export const api = {
     request<Appointment>('/appointments', { method: 'POST', body: JSON.stringify(data) }),
   updateAppointment: (id: number, data: Partial<NewAppointment>) =>
     request<Appointment>(`/appointments/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-  deleteAppointment: (id: number) => request<void>(`/appointments/${id}`, { method: 'DELETE' }),
+  deleteAppointment: (id: number, scope?: 'future') =>
+    request<void>(`/appointments/${id}${scope ? `?scope=${scope}` : ''}`, { method: 'DELETE' }),
   confirmAppointment: (id: number) => request<Appointment>(`/appointments/${id}/confirm`, { method: 'PUT' }),
 
   getDoseHistory: (personId: number, from: string, to: string) =>
