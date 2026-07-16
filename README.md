@@ -167,7 +167,7 @@ Install above instead.
 
 ```
 people        (id, name, date_of_birth, notes, created_at)
-medications   (id, person_id, name, dosage, color, description, schedule_json, active, created_at)
+medications   (id, person_id, name, brand_name, dosage, color, description, schedule_json, active, created_at)
 dose_events   (id [client UUID], medication_id, scheduled_date, scheduled_time, taken_at, created_at)
 doctors       (id, person_id, name, specialty, phone, address, notes, created_at)
 appointments  (id, person_id, doctor_id, datetime_utc, location, prep_notes, confirmed_at, created_at)
@@ -233,6 +233,7 @@ curl -X POST http://localhost:8093/api/medications \
   -d '{
     "person_id": 1,
     "name": "Lisinopril",
+    "brand_name": "Zestril",
     "dosage": "10mg",
     "color": "#4C6EF5",
     "description": "Blood pressure medication. Take with water.",
@@ -474,11 +475,12 @@ restarting to apply it; nothing installs itself without that confirmation.
 
 <table>
 <tr>
-<td align="center" width="50%"><img src="docs/screenshots/admin-people.png" width="380" alt="Admin app — People screen"><br><sub>People</sub></td>
-<td align="center" width="50%"><img src="docs/screenshots/admin-medications.png" width="380" alt="Admin app — Medications screen with schedule editor"><br><sub>Medications, with the time/days schedule editor</sub></td>
+<td align="center" width="50%"><img src="docs/screenshots/admin-people.png" width="380" alt="Admin app — People screen, with the connected server address shown in the sidebar"><br><sub>People — the sidebar always shows which server you're connected to</sub></td>
+<td align="center" width="50%"><img src="docs/screenshots/admin-medications.png" width="380" alt="Admin app — Medications screen showing brand names and bordered color dots"><br><sub>Medications — brand name shown alongside the generic name; color dots have a border so pale colors stay visible</sub></td>
 </tr>
 <tr>
-<td align="center" width="50%" colspan="2"><img src="docs/screenshots/admin-compliance.png" width="380" alt="Admin app — Compliance history view"><br><sub>Compliance history</sub></td>
+<td align="center" width="50%"><img src="docs/screenshots/admin-medication-form.png" width="380" alt="Admin app — Edit medication form with a Brand name field"><br><sub>Add/edit medication, with the Brand name field</sub></td>
+<td align="center" width="50%"><img src="docs/screenshots/admin-compliance.png" width="380" alt="Admin app — Compliance history view"><br><sub>Compliance history</sub></td>
 </tr>
 </table>
 
