@@ -33,8 +33,35 @@ function ensureTodayDoseEvents(db, personId, now) {
   return todayDate;
 }
 
+// Same lazy-generation pattern as ensureTodayDoseEvents, for actions instead
+// of medications.
+function ensureTodayActionEvents(db, personId, now) {
+  const todayDate = torontoDateString(now);
+  const dayAbbrev = torontoDayAbbrev(now);
+
+  const actions = db.prepare('SELECT * FROM actions WHERE person_id = ? AND active = 1').all(personId);
+
+  const insertIfMissing = db.prepare(`
+    INSERT OR IGNORE INTO action_events (id, action_id, scheduled_date, scheduled_time)
+    VALUES (?, ?, ?, ?)
+  `);
+
+  const ensure = db.transaction(() => {
+    for (const action of actions) {
+      if (!scheduleAppliesToday(action.schedule_json, dayAbbrev)) continue;
+      for (const time of scheduleTimes(action.schedule_json)) {
+        insertIfMissing.run(crypto.randomUUID(), action.id, todayDate, time);
+      }
+    }
+  });
+  ensure();
+
+  return todayDate;
+}
+
 function getTodayForPerson(db, personId, now = new Date()) {
   const todayDate = ensureTodayDoseEvents(db, personId, now);
+  ensureTodayActionEvents(db, personId, now);
 
   const doses = db
     .prepare(
@@ -60,6 +87,29 @@ function getTodayForPerson(db, personId, now = new Date()) {
       taken_at: row.taken_at,
     }));
 
+  const actions = db
+    .prepare(
+      `
+      SELECT ae.id AS action_event_id, ae.scheduled_time, ae.done_at,
+             a.id AS action_id, a.name, a.category, a.notes
+      FROM action_events ae
+      JOIN actions a ON a.id = ae.action_id
+      WHERE a.person_id = ? AND ae.scheduled_date = ?
+      ORDER BY ae.scheduled_time ASC
+    `
+    )
+    .all(personId, todayDate)
+    .map((row) => ({
+      action_event_id: row.action_event_id,
+      action_id: row.action_id,
+      name: row.name,
+      category: row.category,
+      notes: row.notes,
+      scheduled_time: row.scheduled_time,
+      done: !!row.done_at,
+      done_at: row.done_at,
+    }));
+
   const allAppointments = db
     .prepare('SELECT * FROM appointments WHERE person_id = ? ORDER BY datetime_utc ASC')
     .all(personId);
@@ -75,9 +125,10 @@ function getTodayForPerson(db, personId, now = new Date()) {
   return {
     date: todayDate,
     doses,
+    actions,
     appointments_today: appointmentsToday,
     appointments_upcoming: appointmentsUpcoming,
   };
 }
 
-module.exports = { getTodayForPerson, ensureTodayDoseEvents };
+module.exports = { getTodayForPerson, ensureTodayDoseEvents, ensureTodayActionEvents };

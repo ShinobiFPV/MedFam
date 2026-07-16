@@ -44,6 +44,12 @@ async function applyAction(action: QueuedAction): Promise<void> {
     case 'confirm':
       await api.confirmAppointment(Number(action.targetId));
       return;
+    case 'action-done':
+      await api.markActionDone(action.targetId, action.takenAt);
+      return;
+    case 'action-undone':
+      await api.markActionUndone(action.targetId);
+      return;
   }
 }
 
@@ -92,9 +98,22 @@ export function applyQueueToToday(today: TodayResponse, queue: QueuedAction[]): 
     return { ...dose, taken: false, taken_at: null };
   });
 
+  const actions = today.actions.map((action) => {
+    const relevant = queue.filter(
+      (a) => (a.type === 'action-done' || a.type === 'action-undone') && a.targetId === action.action_event_id
+    );
+    if (relevant.length === 0) return action;
+    const last = relevant[relevant.length - 1];
+    if (last.type === 'action-done') {
+      return { ...action, done: true, done_at: last.takenAt ?? last.createdAt };
+    }
+    return { ...action, done: false, done_at: null };
+  });
+
   return {
     ...today,
     doses,
+    actions,
     appointments_today: applyQueueToAppointments(today.appointments_today, queue),
     appointments_upcoming: applyQueueToAppointments(today.appointments_upcoming, queue),
   };
@@ -127,6 +146,20 @@ export function setDoseTaken(
   return {
     ...today,
     doses: today.doses.map((dose) => (dose.dose_event_id === doseEventId ? { ...dose, taken, taken_at: takenAt } : dose)),
+  };
+}
+
+export function setActionDone(
+  today: TodayResponse,
+  actionEventId: string,
+  done: boolean,
+  doneAt: string | null
+): TodayResponse {
+  return {
+    ...today,
+    actions: today.actions.map((action) =>
+      action.action_event_id === actionEventId ? { ...action, done, done_at: doneAt } : action
+    ),
   };
 }
 

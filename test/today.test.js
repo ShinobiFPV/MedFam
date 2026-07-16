@@ -108,3 +108,86 @@ test('marking a dose taken is reflected on the next today call', () => {
   assert.equal(second.doses.length, 1);
   assert.equal(second.doses[0].taken, true);
 });
+
+function insertAction(db, personId, schedule, overrides = {}) {
+  return db
+    .prepare(
+      `
+      INSERT INTO actions (person_id, name, category, notes, schedule_json)
+      VALUES (?, ?, ?, ?, ?)
+    `
+    )
+    .run(
+      personId,
+      overrides.name || 'Test Action',
+      overrides.category || 'Exercise',
+      overrides.notes || 'notes',
+      JSON.stringify(schedule)
+    ).lastInsertRowid;
+}
+
+test('generates action_events for an action scheduled today (daily)', () => {
+  const db = getDb(':memory:');
+  const personId = insertPerson(db);
+  insertAction(db, personId, { times: ['09:00', '17:00'], days: 'daily' });
+
+  const result = getTodayForPerson(db, personId);
+
+  assert.equal(result.actions.length, 2);
+  assert.deepEqual(
+    result.actions.map((a) => a.scheduled_time).sort(),
+    ['09:00', '17:00']
+  );
+  assert.ok(result.actions.every((a) => a.done === false));
+});
+
+test('does not duplicate action_events across repeated calls the same day', () => {
+  const db = getDb(':memory:');
+  const personId = insertPerson(db);
+  insertAction(db, personId, { times: ['09:00'], days: 'daily' });
+
+  getTodayForPerson(db, personId);
+  getTodayForPerson(db, personId);
+  const result = getTodayForPerson(db, personId);
+
+  assert.equal(result.actions.length, 1);
+  const count = db.prepare('SELECT COUNT(*) AS c FROM action_events').get().c;
+  assert.equal(count, 1);
+});
+
+test('action only scheduled on other days does not appear today', () => {
+  const db = getDb(':memory:');
+  const personId = insertPerson(db);
+
+  const today = torontoDayAbbrev();
+  const otherDay = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].find((d) => d !== today);
+
+  insertAction(db, personId, { times: ['09:00'], days: [otherDay] });
+
+  const result = getTodayForPerson(db, personId);
+  assert.equal(result.actions.length, 0);
+});
+
+test('inactive actions are excluded from today', () => {
+  const db = getDb(':memory:');
+  const personId = insertPerson(db);
+  const actionId = insertAction(db, personId, { times: ['09:00'], days: 'daily' });
+  db.prepare('UPDATE actions SET active = 0 WHERE id = ?').run(actionId);
+
+  const result = getTodayForPerson(db, personId);
+  assert.equal(result.actions.length, 0);
+});
+
+test('marking an action done is reflected on the next today call', () => {
+  const db = getDb(':memory:');
+  const personId = insertPerson(db);
+  insertAction(db, personId, { times: ['09:00'], days: 'daily' });
+
+  const first = getTodayForPerson(db, personId);
+  const actionEventId = first.actions[0].action_event_id;
+  db.prepare("UPDATE action_events SET done_at = datetime('now') WHERE id = ?").run(actionEventId);
+
+  const second = getTodayForPerson(db, personId);
+  assert.equal(second.actions.length, 1);
+  assert.equal(second.actions[0].done, true);
+});

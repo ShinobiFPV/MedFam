@@ -4,11 +4,12 @@ import { useToday } from '../hooks/useToday';
 import { useDoctors } from '../hooks/useDoctors';
 import { formatLongDate, timeOfDayBucket } from '../lib/timezone';
 import { MedCard } from '../components/MedCard';
+import { ActionCard } from '../components/ActionCard';
 import { SkeletonCard } from '../components/SkeletonCard';
 import { OfflineBanner } from '../components/OfflineBanner';
 import { AppointmentBanner } from '../components/AppointmentBanner';
 import { DescriptionSheet } from '../components/DescriptionSheet';
-import type { Dose } from '../types';
+import type { DescriptionSheetItem } from '../components/DescriptionSheet';
 import styles from './Today.module.css';
 
 interface TodayScreenProps {
@@ -25,9 +26,9 @@ const SECTION_ORDER: Array<{ key: 'morning' | 'afternoon' | 'evening'; label: st
 
 export function TodayScreen({ onOpenAppointments, onOpenDoctors, onOpenSettings }: TodayScreenProps) {
   const { person, personId } = usePerson();
-  const { today, loading, toggleDose } = useToday(personId);
+  const { today, loading, toggleDose, toggleAction } = useToday(personId);
   const doctors = useDoctors(personId);
-  const [infoDose, setInfoDose] = useState<Dose | null>(null);
+  const [infoItem, setInfoItem] = useState<DescriptionSheetItem | null>(null);
 
   const doctorName = (doctorId: number | null) => doctors.find((d) => d.id === doctorId)?.name;
 
@@ -38,7 +39,7 @@ export function TodayScreen({ onOpenAppointments, onOpenDoctors, onOpenSettings 
       })).filter((section) => section.doses.length > 0)
     : [];
 
-  const hasNoMeds = !!today && today.doses.length === 0;
+  const hasNothingToday = !!today && today.doses.length === 0 && today.actions.length === 0;
   const showSkeleton = loading && !today;
 
   return (
@@ -71,22 +72,38 @@ export function TodayScreen({ onOpenAppointments, onOpenDoctors, onOpenSettings 
               <AppointmentBanner key={appt.id} appointment={appt} doctorName={doctorName(appt.doctor_id)} />
             ))}
 
-            {hasNoMeds ? (
+            {hasNothingToday ? (
               <div className={styles.empty}>Nothing scheduled today ✓</div>
             ) : (
-              grouped.map((section) => (
-                <section key={section.key} className={styles.section}>
-                  <h2 className={styles.sectionTitle}>{section.label}</h2>
-                  {section.doses.map((dose) => (
-                    <MedCard
-                      key={dose.dose_event_id}
-                      dose={dose}
-                      onToggle={(d, next) => toggleDose(d.dose_event_id, next)}
-                      onShowInfo={setInfoDose}
-                    />
-                  ))}
-                </section>
-              ))
+              <>
+                {grouped.map((section) => (
+                  <section key={section.key} className={styles.section}>
+                    <h2 className={styles.sectionTitle}>{section.label}</h2>
+                    {section.doses.map((dose) => (
+                      <MedCard
+                        key={dose.dose_event_id}
+                        dose={dose}
+                        onToggle={(d, next) => toggleDose(d.dose_event_id, next)}
+                        onShowInfo={(d) => setInfoItem({ name: d.name, description: d.description })}
+                      />
+                    ))}
+                  </section>
+                ))}
+
+                {today && today.actions.length > 0 && (
+                  <section className={styles.section}>
+                    <h2 className={styles.sectionTitle}>Activities</h2>
+                    {today.actions.map((action) => (
+                      <ActionCard
+                        key={action.action_event_id}
+                        action={action}
+                        onToggle={(a, next) => toggleAction(a.action_event_id, next)}
+                        onShowInfo={(a) => setInfoItem({ name: a.name, description: a.notes })}
+                      />
+                    ))}
+                  </section>
+                )}
+              </>
             )}
           </>
         )}
@@ -101,7 +118,7 @@ export function TodayScreen({ onOpenAppointments, onOpenDoctors, onOpenSettings 
         </button>
       </div>
 
-      <DescriptionSheet dose={infoDose} onClose={() => setInfoDose(null)} />
+      <DescriptionSheet item={infoItem} onClose={() => setInfoItem(null)} />
     </div>
   );
 }

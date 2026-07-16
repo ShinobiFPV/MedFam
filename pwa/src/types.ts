@@ -49,9 +49,30 @@ export interface DoseEventRow {
   created_at: string;
 }
 
+export interface ActionDose {
+  action_event_id: string;
+  action_id: number;
+  name: string;
+  category: string | null;
+  notes: string | null;
+  scheduled_time: string;
+  done: boolean;
+  done_at: string | null;
+}
+
+export interface ActionEventRow {
+  id: string;
+  action_id: number;
+  scheduled_date: string;
+  scheduled_time: string;
+  done_at: string | null;
+  created_at: string;
+}
+
 export interface TodayResponse {
   date: string; // YYYY-MM-DD in America/Toronto
   doses: Dose[];
+  actions: ActionDose[];
   appointments_today: Appointment[];
   appointments_upcoming: Appointment[];
 }

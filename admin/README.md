@@ -1,8 +1,9 @@
 # MedFam Admin
 
 A Windows desktop app (Electron + React + TypeScript) for managing MedFam profiles,
-medications, doctors, and appointments, plus a dose-compliance history view. It's a
-separate client of the same REST API the tablet PWA uses — point it at your MedFam
+medications, doctors, appointments, and actions (non-appointment, non-medication
+regimens like exercise or self-directed physio), plus a dose-compliance history view.
+It's a separate client of the same REST API the tablet PWA uses — point it at your MedFam
 server's address and it manages that server's data directly. No login (matches the
 rest of MedFam's network-perimeter-trust model); whoever can reach your server can use
 this app against it.

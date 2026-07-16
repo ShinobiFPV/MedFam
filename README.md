@@ -11,8 +11,8 @@ your network.
 - **Tablet PWA**: a Vite/React progressive web app served by the same backend at `/` —
   one service, one install, no separate deploy.
 - **Admin app** (`admin/`): a Windows desktop app (Electron) for managing profiles,
-  medications, doctors, and appointments, plus a compliance history view — see
-  [admin/README.md](./admin/README.md).
+  medications, doctors, appointments, and actions (exercise, self-directed physio,
+  etc), plus a compliance history view — see [admin/README.md](./admin/README.md).
 - No accounts, no cloud, no telemetry. It's meant to run on a private network (see the
   warning below) and be administered by whoever installs it.
 
@@ -171,6 +171,8 @@ medications   (id, person_id, name, brand_name, dosage, color, description, sche
 dose_events   (id [client UUID], medication_id, scheduled_date, scheduled_time, taken_at, created_at)
 doctors       (id, person_id, name, specialty, phone, address, notes, created_at)
 appointments  (id, person_id, doctor_id, datetime_utc, location, prep_notes, confirmed_at, series_id, recurrence_rule, created_at)
+actions       (id, person_id, name, category, notes, schedule_json, active, created_at)
+action_events (id [client UUID], action_id, scheduled_date, scheduled_time, done_at, created_at)
 ```
 
 `schedule_json` supports two shapes:
@@ -179,6 +181,13 @@ appointments  (id, person_id, doctor_id, datetime_utc, location, prep_notes, con
 {"times": ["08:00", "20:00"], "days": "daily"}
 {"times": ["21:00"], "days": ["mon", "wed", "fri"]}
 ```
+
+**Actions** track non-appointment, non-medication regimens a person follows on their
+own — exercise, self-directed physio, stretching, etc. They use the same
+`schedule_json` shape as medications and the same lazy-generation pattern as
+`dose_events`: `action_events` rows are created on demand when `/today` is called,
+and marking one done/undone works the same way as taking a dose (see the Actions API
+section below).
 
 Recurring appointments are materialized up front, like `dose_events` are for
 medications: creating an appointment with a `recurrence` rule inserts one row per
@@ -332,11 +341,42 @@ curl -X DELETE "http://localhost:8093/api/appointments/1?scope=future"
 curl -X PUT http://localhost:8093/api/appointments/1/confirm
 ```
 
+### Actions
+
+```bash
+# List (optionally filter by person)
+curl http://localhost:8093/api/actions
+curl "http://localhost:8093/api/actions?person_id=1"
+
+# Get one
+curl http://localhost:8093/api/actions/1
+
+# Create
+curl -X POST http://localhost:8093/api/actions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "person_id": 1,
+    "name": "Ankle stretches",
+    "category": "Physio",
+    "notes": "10 reps each side, hold 15 seconds.",
+    "schedule_json": {"times": ["09:30", "19:00"], "days": "daily"}
+  }'
+
+# Update
+curl -X PUT http://localhost:8093/api/actions/1 \
+  -H "Content-Type: application/json" \
+  -d '{"active": 0}'
+
+# Delete
+curl -X DELETE http://localhost:8093/api/actions/1
+```
+
 ### Purpose-built endpoints
 
 **`GET /api/people/:id/today`** — the key endpoint for the tablet app. Returns every
-dose due today (in the configured timezone), generating any missing `dose_events` rows
-on read, plus today's appointments and the next 3 upcoming.
+dose and action due today (in the configured timezone), generating any missing
+`dose_events`/`action_events` rows on read, plus today's appointments and the next 3
+upcoming.
 
 ```bash
 curl http://localhost:8093/api/people/1/today
@@ -358,6 +398,18 @@ curl http://localhost:8093/api/people/1/today
       "taken_at": null
     }
   ],
+  "actions": [
+    {
+      "action_event_id": "6b8f...uuid",
+      "action_id": 1,
+      "name": "Ankle stretches",
+      "category": "Physio",
+      "notes": "10 reps each side, hold 15 seconds.",
+      "scheduled_time": "09:30",
+      "done": false,
+      "done_at": null
+    }
+  ],
   "appointments_today": [],
   "appointments_upcoming": []
 }
@@ -375,6 +427,15 @@ curl -X PUT http://localhost:8093/api/dose-events/3f1c.../taken \
   -d '{"taken_at":"2026-07-14T12:05:00Z"}'
 
 curl -X PUT http://localhost:8093/api/dose-events/3f1c.../untaken
+```
+
+**`PUT /api/action-events/:id/done`** / **`PUT /api/action-events/:id/undone`** — same
+idempotent shape as the dose-events endpoints above, for actions instead of
+medications.
+
+```bash
+curl -X PUT http://localhost:8093/api/action-events/6b8f.../done
+curl -X PUT http://localhost:8093/api/action-events/6b8f.../undone
 ```
 
 **`GET /api/people/:id/appointments/upcoming?limit=N`** — next N appointments
@@ -499,7 +560,9 @@ verified manually against a running API — there's no UI/component test harness
 
 A Windows desktop app (Electron + React + TypeScript) for day-to-day data management —
 adding/editing people, medications (with a proper time/days schedule editor), doctors,
-and appointments, plus a dose-compliance history view. It's a separate client of the
+appointments, and actions (non-appointment, non-medication regimens like exercise or
+self-directed physio, using the same schedule editor as medications), plus a
+dose-compliance history view. It's a separate client of the
 same REST API the tablet PWA uses, not a variant of the PWA itself: it runs on your own
 Windows machine and connects to your MedFam server's address (asked once on first
 launch, editable later in Settings) rather than being served same-origin.

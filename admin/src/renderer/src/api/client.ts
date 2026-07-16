@@ -1,4 +1,4 @@
-import type { Appointment, Doctor, DoseHistoryEntry, Medication, Person, RecurrenceRule } from '../types';
+import type { Action, Appointment, Doctor, DoseHistoryEntry, Medication, Person, RecurrenceRule } from '../types';
 
 export class ApiError extends Error {
   status: number;
@@ -56,6 +56,8 @@ type NewPerson = Pick<Person, 'name'> & Partial<Pick<Person, 'date_of_birth' | '
 type NewMedication = Pick<Medication, 'person_id' | 'name' | 'schedule_json'> &
   Partial<Pick<Medication, 'brand_name' | 'dosage' | 'color' | 'description' | 'active'>>;
 type NewDoctor = Pick<Doctor, 'person_id' | 'name'> & Partial<Pick<Doctor, 'specialty' | 'phone' | 'address' | 'notes'>>;
+type NewAction = Pick<Action, 'person_id' | 'name' | 'schedule_json'> &
+  Partial<Pick<Action, 'category' | 'notes' | 'active'>>;
 type NewAppointment = Pick<Appointment, 'person_id' | 'datetime_utc'> &
   Partial<Pick<Appointment, 'doctor_id' | 'location' | 'prep_notes'>> & { recurrence?: RecurrenceRule };
 
@@ -92,4 +94,10 @@ export const api = {
 
   getDoseHistory: (personId: number, from: string, to: string) =>
     request<DoseHistoryEntry[]>(`/people/${personId}/doses?from=${from}&to=${to}`),
+
+  getActions: (personId: number) => request<Action[]>(`/actions?person_id=${personId}`),
+  createAction: (data: NewAction) => request<Action>('/actions', { method: 'POST', body: JSON.stringify(data) }),
+  updateAction: (id: number, data: Partial<NewAction>) =>
+    request<Action>(`/actions/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteAction: (id: number) => request<void>(`/actions/${id}`, { method: 'DELETE' }),
 };

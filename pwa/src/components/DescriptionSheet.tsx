@@ -1,13 +1,17 @@
-import type { Dose } from '../types';
 import styles from './DescriptionSheet.module.css';
 
+export interface DescriptionSheetItem {
+  name: string;
+  description: string | null;
+}
+
 interface DescriptionSheetProps {
-  dose: Dose | null;
+  item: DescriptionSheetItem | null;
   onClose: () => void;
 }
 
-export function DescriptionSheet({ dose, onClose }: DescriptionSheetProps) {
-  if (!dose) return null;
+export function DescriptionSheet({ item, onClose }: DescriptionSheetProps) {
+  if (!item) return null;
 
   return (
     <div className={styles.overlay} onClick={onClose}>
@@ -15,11 +19,11 @@ export function DescriptionSheet({ dose, onClose }: DescriptionSheetProps) {
         className={styles.sheet}
         role="dialog"
         aria-modal="true"
-        aria-label={`About ${dose.name}`}
+        aria-label={`About ${item.name}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className={styles.name}>{dose.name}</div>
-        <div className={styles.description}>{dose.description || 'No description available.'}</div>
+        <div className={styles.name}>{item.name}</div>
+        <div className={styles.description}>{item.description || 'No description available.'}</div>
         <button type="button" className={styles.close} onClick={onClose}>
           Close
         </button>

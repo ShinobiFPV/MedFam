@@ -10,6 +10,8 @@ vi.mock('../api/client', async (importOriginal) => {
       markTaken: vi.fn(),
       markUntaken: vi.fn(),
       confirmAppointment: vi.fn(),
+      markActionDone: vi.fn(),
+      markActionUndone: vi.fn(),
     },
   };
 });
@@ -22,6 +24,7 @@ const {
   applyQueueToToday,
   applyQueueToAppointments,
   setDoseTaken,
+  setActionDone,
   setAppointmentConfirmed,
 } = await import('./queue');
 
@@ -140,6 +143,18 @@ describe('applyQueueToToday overlay', () => {
         taken_at: null,
       },
     ],
+    actions: [
+      {
+        action_event_id: 'action-1',
+        action_id: 1,
+        name: 'Ankle stretches',
+        category: 'Physio',
+        notes: 'notes',
+        scheduled_time: '09:00',
+        done: false,
+        done_at: null,
+      },
+    ],
     appointments_today: [],
     appointments_upcoming: [
       {
@@ -178,6 +193,24 @@ describe('applyQueueToToday overlay', () => {
     const result = applyQueueToAppointments(baseToday.appointments_upcoming, queue);
     expect(result[0].confirmed_at).toBe('z');
   });
+
+  test('overlays a pending action-done action onto the matching action without mutating the source', () => {
+    const queue = [{ id: 1, type: 'action-done' as const, targetId: 'action-1', takenAt: 'x', createdAt: 'x' }];
+    const result = applyQueueToToday(baseToday, queue);
+
+    expect(result.actions[0].done).toBe(true);
+    expect(result.actions[0].done_at).toBe('x');
+    expect(baseToday.actions[0].done).toBe(false); // original untouched
+  });
+
+  test('the most recently queued action-done/action-undone for a target wins', () => {
+    const queue = [
+      { id: 1, type: 'action-done' as const, targetId: 'action-1', takenAt: 'x', createdAt: 'x' },
+      { id: 2, type: 'action-undone' as const, targetId: 'action-1', createdAt: 'y' },
+    ];
+    const result = applyQueueToToday(baseToday, queue);
+    expect(result.actions[0].done).toBe(false);
+  });
 });
 
 describe('direct local mutations (survive a flush that outruns the next render)', () => {
@@ -194,6 +227,18 @@ describe('direct local mutations (survive a flush that outruns the next render)'
         scheduled_time: '08:00',
         taken: false,
         taken_at: null,
+      },
+    ],
+    actions: [
+      {
+        action_event_id: 'action-1',
+        action_id: 1,
+        name: 'Ankle stretches',
+        category: 'Physio',
+        notes: 'notes',
+        scheduled_time: '09:00',
+        done: false,
+        done_at: null,
       },
     ],
     appointments_today: [],
@@ -213,6 +258,20 @@ describe('direct local mutations (survive a flush that outruns the next render)'
     const untaken = setDoseTaken(taken, 'dose-1', false, null);
     expect(untaken.doses[0].taken).toBe(false);
     expect(untaken.doses[0].taken_at).toBeNull();
+  });
+
+  test('setActionDone marks the target action without an empty queue erasing it', () => {
+    const mutated = setActionDone(baseToday, 'action-1', true, 'x');
+    const rendered = applyQueueToToday(mutated, []);
+    expect(rendered.actions[0].done).toBe(true);
+    expect(rendered.actions[0].done_at).toBe('x');
+  });
+
+  test('setActionDone back to not-done clears done_at', () => {
+    const done = setActionDone(baseToday, 'action-1', true, 'x');
+    const undone = setActionDone(done, 'action-1', false, null);
+    expect(undone.actions[0].done).toBe(false);
+    expect(undone.actions[0].done_at).toBeNull();
   });
 
   test('setAppointmentConfirmed marks the target appointment without an empty queue erasing it', () => {

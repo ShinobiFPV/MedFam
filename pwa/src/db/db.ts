@@ -2,12 +2,13 @@ import { openDB } from 'idb';
 import type { DBSchema, IDBPDatabase } from 'idb';
 import type { Appointment, Doctor, TodayResponse } from '../types';
 
-export type ActionType = 'taken' | 'untaken' | 'confirm';
+export type ActionType = 'taken' | 'untaken' | 'confirm' | 'action-done' | 'action-undone';
 
 export interface QueuedAction {
   id?: number;
   type: ActionType;
-  // dose_event_id (uuid string) for taken/untaken, appointment id (stringified) for confirm
+  // dose_event_id (uuid) for taken/untaken, appointment id (stringified) for
+  // confirm, action_event_id (uuid) for action-done/action-undone
   targetId: string;
   takenAt?: string;
   createdAt: string;

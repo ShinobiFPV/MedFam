@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../api/client';
 import { readTodayCache, writeTodayCache } from '../db/cache';
-import { applyQueueToToday, setDoseTaken } from '../db/queue';
+import { applyQueueToToday, setActionDone, setDoseTaken } from '../db/queue';
 import { useQueue } from '../context/QueueContext';
 import { isCacheStale } from '../lib/timezone';
 import type { TodayResponse } from '../types';
@@ -14,6 +14,7 @@ interface UseTodayResult {
   loading: boolean;
   isFromCache: boolean;
   toggleDose: (doseEventId: string, nextTaken: boolean) => Promise<void>;
+  toggleAction: (actionEventId: string, nextDone: boolean) => Promise<void>;
   refresh: () => Promise<void>;
 }
 
@@ -40,6 +41,9 @@ export function useToday(personId: number | null): UseTodayResult {
   // mutation, otherwise it keeps the local value until a fetch that's
   // actually newer confirms it.
   const localOverridesRef = useRef<Map<string, LocalOverride>>(new Map());
+  // Same purpose as localOverridesRef above, kept separate since action_event_id
+  // and dose_event_id are independent uuid spaces.
+  const actionOverridesRef = useRef<Map<string, LocalOverride>>(new Map());
 
   const fetchFresh = useCallback(async (id: number) => {
     const requestStartedAt = Date.now();
@@ -57,6 +61,15 @@ export function useToday(personId: number | null): UseTodayResult {
           }
           localOverridesRef.current.delete(dose.dose_event_id);
           return dose;
+        }),
+        actions: response.actions.map((action) => {
+          const override = actionOverridesRef.current.get(action.action_event_id);
+          if (!override) return action;
+          if (override.mutatedAt > requestStartedAt) {
+            return { ...action, done: override.taken, done_at: override.takenAt };
+          }
+          actionOverridesRef.current.delete(action.action_event_id);
+          return action;
         }),
       };
 
@@ -157,7 +170,35 @@ export function useToday(personId: number | null): UseTodayResult {
     [enqueue]
   );
 
+  const toggleAction = useCallback(
+    async (actionEventId: string, nextDone: boolean) => {
+      const timestamp = new Date().toISOString();
+
+      actionOverridesRef.current.set(actionEventId, {
+        taken: nextDone,
+        takenAt: nextDone ? timestamp : null,
+        mutatedAt: Date.now(),
+      });
+
+      // See the matching comment in toggleDose above.
+      setRawToday((prev) => {
+        if (!prev) return prev;
+        const updated = setActionDone(prev, actionEventId, nextDone, nextDone ? timestamp : null);
+        if (personIdRef.current != null) writeTodayCache(personIdRef.current, updated);
+        return updated;
+      });
+
+      await enqueue({
+        type: nextDone ? 'action-done' : 'action-undone',
+        targetId: actionEventId,
+        takenAt: nextDone ? timestamp : undefined,
+        createdAt: timestamp,
+      });
+    },
+    [enqueue]
+  );
+
   const today = rawToday ? applyQueueToToday(rawToday, queue) : null;
 
-  return { today, loading, isFromCache, toggleDose, refresh };
+  return { today, loading, isFromCache, toggleDose, toggleAction, refresh };
 }

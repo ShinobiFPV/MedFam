@@ -2,15 +2,17 @@ import { useState } from 'react';
 import { MedicationsScreen } from './Medications';
 import { DoctorsScreen } from './Doctors';
 import { AppointmentsScreen } from './Appointments';
+import { ActionsScreen } from './Actions';
 import { ComplianceScreen } from './Compliance';
 import styles from './PersonDetail.module.css';
 
-type Tab = 'medications' | 'doctors' | 'appointments' | 'compliance';
+type Tab = 'medications' | 'doctors' | 'appointments' | 'actions' | 'compliance';
 
 const TABS: Array<{ key: Tab; label: string }> = [
   { key: 'medications', label: 'Medications' },
   { key: 'doctors', label: 'Doctors' },
   { key: 'appointments', label: 'Appointments' },
+  { key: 'actions', label: 'Actions' },
   { key: 'compliance', label: 'Compliance' },
 ];
 
@@ -47,6 +49,7 @@ export function PersonDetail({ personId, personName, onBack }: PersonDetailProps
         {tab === 'medications' && <MedicationsScreen personId={personId} />}
         {tab === 'doctors' && <DoctorsScreen personId={personId} />}
         {tab === 'appointments' && <AppointmentsScreen personId={personId} />}
+        {tab === 'actions' && <ActionsScreen personId={personId} />}
         {tab === 'compliance' && <ComplianceScreen personId={personId} />}
       </div>
     </div>

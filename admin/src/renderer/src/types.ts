@@ -49,6 +49,17 @@ export interface RecurrenceRule {
   count: number;
 }
 
+export interface Action {
+  id: number;
+  person_id: number;
+  name: string;
+  category: string | null;
+  notes: string | null;
+  schedule_json: string;
+  active: number;
+  created_at: string;
+}
+
 export interface DoseHistoryEntry {
   dose_event_id: string;
   scheduled_date: string;

@@ -26,6 +26,20 @@ async function createMedication(baseUrl, personId) {
   return res.json();
 }
 
+async function createAction(baseUrl, personId) {
+  const res = await fetch(`${baseUrl}/actions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      person_id: personId,
+      name: 'Test Action',
+      category: 'Exercise',
+      schedule_json: { times: ['09:00'], days: 'daily' },
+    }),
+  });
+  return res.json();
+}
+
 test('marking a dose taken repeatedly is idempotent', async (t) => {
   const { server, baseUrl } = createTestServer();
   t.after(() => server.close());
@@ -80,6 +94,62 @@ test('taken/untaken on an unknown dose event returns 404', async (t) => {
 
   const untakenRes = await fetch(`${baseUrl}/dose-events/does-not-exist/untaken`, { method: 'PUT' });
   assert.equal(untakenRes.status, 404);
+});
+
+test('marking an action done repeatedly is idempotent', async (t) => {
+  const { server, baseUrl } = createTestServer();
+  t.after(() => server.close());
+
+  const person = await createPerson(baseUrl);
+  await createAction(baseUrl, person.id);
+
+  const today = await (await fetch(`${baseUrl}/people/${person.id}/today`)).json();
+  const actionEventId = today.actions[0].action_event_id;
+
+  const first = await (await fetch(`${baseUrl}/action-events/${actionEventId}/done`, { method: 'PUT' })).json();
+  assert.ok(first.done_at);
+
+  const second = await (await fetch(`${baseUrl}/action-events/${actionEventId}/done`, { method: 'PUT' })).json();
+  assert.equal(second.done_at, first.done_at);
+
+  const third = await (
+    await fetch(`${baseUrl}/action-events/${actionEventId}/done`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ done_at: new Date(Date.now() + 100000).toISOString() }),
+    })
+  ).json();
+  assert.equal(third.done_at, first.done_at, 'client-provided done_at should be ignored once already done');
+});
+
+test('marking an action undone repeatedly is idempotent', async (t) => {
+  const { server, baseUrl } = createTestServer();
+  t.after(() => server.close());
+
+  const person = await createPerson(baseUrl);
+  await createAction(baseUrl, person.id);
+
+  const today = await (await fetch(`${baseUrl}/people/${person.id}/today`)).json();
+  const actionEventId = today.actions[0].action_event_id;
+
+  await fetch(`${baseUrl}/action-events/${actionEventId}/done`, { method: 'PUT' });
+
+  const first = await (await fetch(`${baseUrl}/action-events/${actionEventId}/undone`, { method: 'PUT' })).json();
+  assert.equal(first.done_at, null);
+
+  const second = await (await fetch(`${baseUrl}/action-events/${actionEventId}/undone`, { method: 'PUT' })).json();
+  assert.equal(second.done_at, null);
+});
+
+test('done/undone on an unknown action event returns 404', async (t) => {
+  const { server, baseUrl } = createTestServer();
+  t.after(() => server.close());
+
+  const doneRes = await fetch(`${baseUrl}/action-events/does-not-exist/done`, { method: 'PUT' });
+  assert.equal(doneRes.status, 404);
+
+  const undoneRes = await fetch(`${baseUrl}/action-events/does-not-exist/undone`, { method: 'PUT' });
+  assert.equal(undoneRes.status, 404);
 });
 
 test('appointment confirm is idempotent', async (t) => {

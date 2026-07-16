@@ -1,4 +1,4 @@
-import type { Appointment, Doctor, DoseEventRow, Person, TodayResponse } from '../types';
+import type { ActionEventRow, Appointment, Doctor, DoseEventRow, Person, TodayResponse } from '../types';
 
 const BASE = '/api';
 
@@ -46,4 +46,11 @@ export const api = {
     request<DoseEventRow>(`/dose-events/${doseEventId}/untaken`, { method: 'PUT' }),
   confirmAppointment: (appointmentId: number) =>
     request<Appointment>(`/appointments/${appointmentId}/confirm`, { method: 'PUT' }),
+  markActionDone: (actionEventId: string, doneAt?: string) =>
+    request<ActionEventRow>(`/action-events/${actionEventId}/done`, {
+      method: 'PUT',
+      body: JSON.stringify(doneAt ? { done_at: doneAt } : {}),
+    }),
+  markActionUndone: (actionEventId: string) =>
+    request<ActionEventRow>(`/action-events/${actionEventId}/undone`, { method: 'PUT' }),
 };
