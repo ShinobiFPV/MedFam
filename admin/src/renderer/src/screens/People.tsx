@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { api, ApiError } from '../api/client';
 import type { Person } from '../types';
 import { DataTable } from '../components/DataTable';
@@ -26,6 +26,8 @@ export function PeopleScreen({ onSelectPerson }: PeopleScreenProps) {
   const [form, setForm] = useState<PersonFormState>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [importing, setImporting] = useState(false);
+  const importInputRef = useRef<HTMLInputElement>(null);
 
   const load = async () => {
     setLoading(true);
@@ -100,14 +102,52 @@ export function PeopleScreen({ onSelectPerson }: PeopleScreenProps) {
     }
   };
 
+  const importProfile = async (file: File) => {
+    setImporting(true);
+    setError('');
+    try {
+      const body = new FormData();
+      body.append('file', file);
+      await api.importPerson(body);
+      await load();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Failed to import profile');
+    } finally {
+      setImporting(false);
+    }
+  };
+
   return (
     <div>
       <div className={styles.headerRow}>
         <h1 className={styles.title}>People</h1>
-        <button type="button" className={formStyles.primaryButton} onClick={openCreate}>
-          + Add person
-        </button>
+        <div className={styles.headerActions}>
+          <input
+            ref={importInputRef}
+            type="file"
+            accept=".zip"
+            className={styles.hiddenInput}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              e.target.value = ''; // allow re-selecting the same file next time
+              if (file) importProfile(file);
+            }}
+          />
+          <button
+            type="button"
+            className={formStyles.secondaryButton}
+            onClick={() => importInputRef.current?.click()}
+            disabled={importing}
+          >
+            {importing ? 'Importing…' : 'Import profile'}
+          </button>
+          <button type="button" className={formStyles.primaryButton} onClick={openCreate}>
+            + Add person
+          </button>
+        </div>
       </div>
+
+      {error && !creating && !editing && <div className={formStyles.error}>{error}</div>}
 
       {loading ? (
         <div className={styles.loading}>Loading…</div>

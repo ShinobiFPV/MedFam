@@ -33,3 +33,28 @@
   font-size: 13px;
   color: var(--color-text-secondary);
 }
+
+.hiddenInput {
+  display: none;
+}
+
+.dangerButton {
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background: var(--color-danger);
+  border: none;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+}
+
+.dangerButton:hover {
+  background: #b04a4a;
+}
+
+.dangerButton:disabled {
+  background: var(--color-border);
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+}

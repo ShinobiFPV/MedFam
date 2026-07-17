@@ -5,6 +5,16 @@
   margin-bottom: 18px;
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hiddenInput {
+  display: none;
+}
+
 .title {
   font-size: 20px;
   margin: 0;

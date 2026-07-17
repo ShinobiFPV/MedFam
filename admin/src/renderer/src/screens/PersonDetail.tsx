@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { api } from '../api/client';
 import { MedicationsScreen } from './Medications';
 import { DoctorsScreen } from './Doctors';
 import { AppointmentsScreen } from './Appointments';
@@ -34,6 +35,13 @@ export function PersonDetail({ personId, personName, onBack }: PersonDetailProps
           ← People
         </button>
         <h1 className={styles.name}>{personName}</h1>
+        <button
+          type="button"
+          className={styles.exportButton}
+          onClick={() => api.getPersonExportUrl(personId).then((url) => window.open(url, '_blank'))}
+        >
+          Export profile
+        </button>
       </div>
       <div className={styles.tabs}>
         {TABS.map((t) => (

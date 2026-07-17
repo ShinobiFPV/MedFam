@@ -12,8 +12,10 @@ your network.
   one service, one install, no separate deploy.
 - **Admin app** (`admin/`): a Windows desktop app (Electron) for managing profiles,
   medications, doctors, appointments, and actions (exercise, self-directed physio,
-  etc), uploading scans/photos of medical documents to a person's file, plus a
-  compliance history view — see [admin/README.md](./admin/README.md).
+  etc), uploading scans/photos of medical documents to a person's file, exporting or
+  importing a single person's whole profile, and exporting/restoring a full backup of
+  everything, plus a compliance history view — see
+  [admin/README.md](./admin/README.md).
 - No accounts, no cloud, no telemetry. It's meant to run on a private network (see the
   warning below) and be administered by whoever installs it.
 

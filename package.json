@@ -9,11 +9,12 @@
     "dev": "node --watch server.js",
     "start": "node server.js",
     "seed": "node scripts/seed.js",
-    "test": "node --test test/*.test.js"
+    "test": "node --test --test-concurrency=1 test/*.test.js"
   },
   "dependencies": {
     "better-sqlite3": "^11.3.0",
     "express": "^4.19.2",
+    "jszip": "^3.10.1",
     "multer": "^2.2.0"
   },
   "engines": {

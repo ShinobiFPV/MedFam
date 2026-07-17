@@ -4,7 +4,10 @@ A Windows desktop app (Electron + React + TypeScript) for managing MedFam profil
 medications, doctors, appointments, actions (non-appointment, non-medication
 regimens like exercise or self-directed physio), and documents (scans/photos of
 paperwork — referral letters, lab results, insurance cards, etc — attached to a
-person's file), plus a dose-compliance history view.
+person's file), plus a dose-compliance history view. It can also move data between
+installs: export or import a single person's whole profile (including their
+compliance history) as a `.zip`, and export or restore a full backup of everything
+from Settings — see [Data transfer](#data-transfer) below.
 It's a separate client of the same REST API the tablet PWA uses — point it at your MedFam
 server's address and it manages that server's data directly. No login (matches the
 rest of MedFam's network-perimeter-trust model); whoever can reach your server can use
@@ -46,6 +49,26 @@ npm run release   # build, then electron-builder --win --publish always
 This uploads the installer `.exe` plus the `latest.yml` metadata file
 electron-updater needs. Bump `version` in `package.json` before releasing — that
 version is what gets compared against what's currently installed.
+
+## Data transfer
+
+- **Person profile** (on a person's page, "Export profile" / on the People list,
+  "Import profile"): a `.zip` containing that person's medications, doctors,
+  appointments, actions, documents (actual files included), and dose/action
+  compliance history. Import always creates a new person — it never overwrites or
+  merges into an existing one, so it's safe to import into an install that already
+  has data.
+- **Full backup** (Settings → Data): "Export all data" downloads a `.zip` of the
+  entire database plus every document file — the same thing you'd otherwise get by
+  stopping the service and copying `data/medfam.db` + `data/documents/` by hand.
+  "Restore from backup" does the reverse: it **replaces everything** on the target
+  server with the contents of the chosen backup, so it's gated behind typing a
+  confirmation phrase before the button enables. No service restart is needed after
+  a restore — the change is live immediately.
+
+Both directions go through the OS's normal download manager (exports) or a plain
+file picker (imports) — Electron's `shell.openExternal` handles the former, so a
+downloaded `.zip` lands wherever your browser normally saves files.
 
 ## Architecture notes
 

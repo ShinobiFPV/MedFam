@@ -143,4 +143,10 @@ export const api = {
     request<MedicalDocument>(`/documents/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteDocument: (id: number) => request<void>(`/documents/${id}`, { method: 'DELETE' }),
   getDocumentFileUrl: async (id: number) => `${await getBaseUrl()}/api/documents/${id}/file`,
+
+  getPersonExportUrl: async (id: number) => `${await getBaseUrl()}/api/people/${id}/export`,
+  importPerson: (formData: FormData) => requestFormData<Person>('/people/import', formData),
+  getBackupExportUrl: async () => `${await getBaseUrl()}/api/backup/export`,
+  importBackup: (formData: FormData) =>
+    requestFormData<{ restored: Record<string, number> }>('/backup/import', formData),
 };
