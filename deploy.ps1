@@ -32,6 +32,7 @@ $EXCLUDES = @(
     "node_modules",
     "data",
     "pwa",
+    "twa",
     "*.bak",
     "*.bak.*"
 )

@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.shinobifpv.medfam",
+        "sha256_cert_fingerprints": ["BB:C3:E8:EA:DB:26:7C:9C:08:11:AA:53:E2:9A:1A:14:99:8B:25:F9:8D:B8:8F:A3:8F:F9:1E:CA:3A:4E:89:EA"]
+      }
+    }]

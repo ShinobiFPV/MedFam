@@ -1,0 +1,52 @@
+{
+  "packageId": "com.shinobifpv.medfam",
+  "host": "shinobi.tail9249a1.ts.net:9443",
+  "name": "MedFam",
+  "launcherName": "MedFam",
+  "display": "standalone",
+  "themeColor": "#1864AB",
+  "themeColorDark": "#000000",
+  "navigationColor": "#000000",
+  "navigationColorDark": "#000000",
+  "navigationDividerColor": "#000000",
+  "navigationDividerColorDark": "#000000",
+  "backgroundColor": "#FFFFFF",
+  "enableNotifications": false,
+  "startUrl": "/",
+  "iconUrl": "https://shinobi.tail9249a1.ts.net:9443/icons/icon-512.png",
+  "maskableIconUrl": "https://shinobi.tail9249a1.ts.net:9443/icons/icon-512-maskable.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "medfam"
+  },
+  "appVersionName": "2",
+  "appVersionCode": 2,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://shinobi.tail9249a1.ts.net:9443/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://shinobi.tail9249a1.ts.net:9443/",
+  "minSdkVersion": 23,
+  "orientation": "portrait-primary",
+  "fingerprints": [
+    {
+      "name": "release",
+      "value": "BB:C3:E8:EA:DB:26:7C:9C:08:11:AA:53:E2:9A:1A:14:99:8B:25:F9:8D:B8:8F:A3:8F:F9:1E:CA:3A:4E:89:EA"
+    }
+  ],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "protocolHandlers": [],
+  "fileHandlers": [],
+  "launchHandlerClientMode": "",
+  "displayOverride": [],
+  "appVersion": "2"
+}
