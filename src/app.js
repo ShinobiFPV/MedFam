@@ -9,6 +9,7 @@ const appointmentRoutes = require('./routes/appointments');
 const doseEventRoutes = require('./routes/doseEvents');
 const actionRoutes = require('./routes/actions');
 const actionEventRoutes = require('./routes/actionEvents');
+const documentRoutes = require('./routes/documents');
 
 const PWA_DIST = path.join(__dirname, '..', 'pwa', 'dist');
 
@@ -43,6 +44,7 @@ function createApp(db) {
   api.use(doseEventRoutes(db));
   api.use(actionRoutes(db));
   api.use(actionEventRoutes(db));
+  api.use(documentRoutes(db));
 
   app.use('/api', api);
 

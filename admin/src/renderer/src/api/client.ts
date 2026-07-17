@@ -1,4 +1,13 @@
-import type { Action, Appointment, Doctor, DoseHistoryEntry, Medication, Person, RecurrenceRule } from '../types';
+import type {
+  Action,
+  Appointment,
+  Doctor,
+  DoseHistoryEntry,
+  Medication,
+  MedicalDocument,
+  Person,
+  RecurrenceRule,
+} from '../types';
 
 export class ApiError extends Error {
   status: number;
@@ -52,6 +61,33 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+// Separate from request() because a multipart body must not have a
+// Content-Type header set manually -- the browser needs to add its own
+// boundary parameter, which fetch only does when Content-Type is omitted.
+async function requestFormData<T>(path: string, formData: FormData): Promise<T> {
+  const base = await getBaseUrl();
+  if (!base) throw new ApiError(0, 'No server address configured');
+
+  let res: Response;
+  try {
+    res = await fetch(`${base}/api${path}`, { method: 'POST', body: formData });
+  } catch {
+    throw new ApiError(0, `Could not reach ${base} — check the server address in Settings.`);
+  }
+
+  if (!res.ok) {
+    let message = `Request failed: ${res.status}`;
+    try {
+      const body = await res.json();
+      if (body?.error) message = body.error;
+    } catch {
+      // response wasn't JSON; keep the generic message
+    }
+    throw new ApiError(res.status, message);
+  }
+  return res.json() as Promise<T>;
+}
+
 type NewPerson = Pick<Person, 'name'> & Partial<Pick<Person, 'date_of_birth' | 'notes'>>;
 type NewMedication = Pick<Medication, 'person_id' | 'name' | 'schedule_json'> &
   Partial<Pick<Medication, 'brand_name' | 'dosage' | 'color' | 'description' | 'active'>>;
@@ -100,4 +136,11 @@ export const api = {
   updateAction: (id: number, data: Partial<NewAction>) =>
     request<Action>(`/actions/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteAction: (id: number) => request<void>(`/actions/${id}`, { method: 'DELETE' }),
+
+  getDocuments: (personId: number) => request<MedicalDocument[]>(`/documents?person_id=${personId}`),
+  uploadDocument: (formData: FormData) => requestFormData<MedicalDocument>('/documents', formData),
+  updateDocument: (id: number, data: Partial<Pick<MedicalDocument, 'title' | 'category' | 'notes'>>) =>
+    request<MedicalDocument>(`/documents/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteDocument: (id: number) => request<void>(`/documents/${id}`, { method: 'DELETE' }),
+  getDocumentFileUrl: async (id: number) => `${await getBaseUrl()}/api/documents/${id}/file`,
 };

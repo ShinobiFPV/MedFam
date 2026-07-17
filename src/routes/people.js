@@ -1,6 +1,7 @@
 const express = require('express');
 const { personExists } = require('../lib/validate');
 const { getTodayForPerson } = require('../lib/today');
+const { deletePersonDocuments } = require('../lib/documentStorage');
 
 module.exports = function peopleRoutes(db) {
   const router = express.Router();
@@ -40,6 +41,9 @@ module.exports = function peopleRoutes(db) {
   router.delete('/people/:id', (req, res) => {
     const info = db.prepare('DELETE FROM people WHERE id = ?').run(req.params.id);
     if (info.changes === 0) return res.status(404).json({ error: 'Person not found' });
+    // The documents row goes via ON DELETE CASCADE, but the uploaded files
+    // themselves live on disk and need their own cleanup.
+    deletePersonDocuments(req.params.id);
     res.status(204).end();
   });
 

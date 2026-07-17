@@ -60,6 +60,19 @@ export interface Action {
   created_at: string;
 }
 
+export interface MedicalDocument {
+  id: number;
+  person_id: number;
+  title: string;
+  category: string | null;
+  notes: string | null;
+  original_filename: string;
+  stored_filename: string;
+  mime_type: string | null;
+  size_bytes: number | null;
+  uploaded_at: string;
+}
+
 export interface DoseHistoryEntry {
   dose_event_id: string;
   scheduled_date: string;
